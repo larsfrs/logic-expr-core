@@ -1,0 +1,13 @@
+# folders
+src/
+node_modules/
+test/
+
+# IDEs
+.vscode/
+.idea/
+.env
+
+# files
+tsconfig.json
+.gitignore
