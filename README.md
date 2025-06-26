@@ -1,11 +1,10 @@
-<h1 align="center">Logical Expressions Core Module</h1>
+# Logical Expressions Core Module
+
+[NPM Package Page](https://www.npmjs.com/package/logic-expr-core) | [Examples](docs/examples.md) | [Development Setup](docs/dev-setup.md)
 
 ## Description
 
 A TypeScript module that parses, transforms, derives and evaluates logic expressions. Can be easily extended to support more operators, variables, notations, etc.
-
-- [Examples](docs/examples.md)
-- [Development Setup](docs/dev-setup.md)
 
 ## Features
 
