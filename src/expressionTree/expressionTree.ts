@@ -1,10 +1,10 @@
-import { operatorEvalBoolean, booleanContext, OperatorMetadata } from "./expressionTreeOperators.js";
+import { operatorEvalBoolean, booleanContext } from "./expressionTreeOperators.js";
 
 const allOperators = booleanContext.operatorMetadata;
 
 export abstract class ExpressionNode {
     // args optional, so that we can get default values when we omit the args in the method call
-    abstract toString(parentPrecendce?: number, isRightChild?: boolean): string;
+    abstract toString(parentPrecendce?: number, isRightChild?: boolean, sorted?: boolean): string;
     abstract evaluate(variables: Map<string, boolean>): boolean;
 }
 
@@ -19,9 +19,9 @@ export class UnaryOperatorNode extends ExpressionNode {
         );
     }
 
-    toString(parentPrecedence: number = 0, isRightChild: boolean = false): string {
+    toString(parentPrecedence: number = 0, isRightChild: boolean = false, sorted: boolean = false): string {
         const precedence = allOperators[this.operator].precedence || 0;
-        const childdString = this.left.toString(precedence, false);
+        const childdString = this.left.toString(precedence, false, sorted);
 
         if (precedence < parentPrecedence) { // for example: !!a, not !(!a)
             return `(${this.operator}${childdString})`;
@@ -42,12 +42,12 @@ export class BinaryOperatorNode extends ExpressionNode {
         );
     }
 
-    toString(parentPrecedence: number = 0, isRightChild: boolean = false): string {
+    toString(parentPrecedence: number = 0, isRightChild: boolean = false, sorted: boolean = false): string {
         const precedence: number = allOperators[this.operator].precedence || 0;
         const associativity: string = allOperators[this.operator].associativity || 'left';
 
-        const leftString: string = this.left.toString(precedence, false);
-        const rightString: string = this.right.toString(precedence, true);
+        const leftString: string = this.left.toString(precedence, false, sorted);
+        const rightString: string = this.right.toString(precedence, true, sorted);
 
         const expression: string = `${leftString}${this.operator}${rightString}`;
 
@@ -64,14 +64,11 @@ export class BinaryOperatorNode extends ExpressionNode {
 }
 
 export class LeafNode extends ExpressionNode {
-    constructor(public value: string | boolean) {
+    constructor(public value: string) {
         super();
     }
 
     evaluate(variables: Map<string, boolean>): boolean {
-        if (typeof this.value === 'boolean') {
-            return this.value;
-        }
         return variables.get(this.value) ?? false; // default to false if variable not found
     }
 
