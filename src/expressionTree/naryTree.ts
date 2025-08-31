@@ -111,6 +111,10 @@ export function NaryTreeToBinaryTree(expression: ExpressionNode): ExpressionNode
  * Tree2: (B + (E + D)) + A
  * Here we would need to be able to say that both trees are equivalent, or for
  * example find a matching subtree in a larger expression tree.
+ * 
+ * Demonstration Test Cases:
+ * 1. absorptionLaw.test.ts, case 4, 5
+ * 2. complementLaw.test.ts, case 3
  */
 export function treeCanonicalForm(expressionNode: ExpressionNode): string {
     return expressionNode.toString(undefined, undefined, true);
