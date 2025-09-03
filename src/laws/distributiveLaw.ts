@@ -1,5 +1,5 @@
 import { ExpressionNode, LeafNode, UnaryOperatorNode } from "../expressionTree/expressionTree.js";
-import { associativityLawChildren } from "./associativityLaw.js";
+import { associativityLaw, associativityLawChildren } from "./associativityLaw.js";
 import { NaryOperatorNode } from "../expressionTree/naryTree.js";
 
 
@@ -11,7 +11,12 @@ export function isNaryAndDistributable(node: ExpressionNode, op: string): node i
     return node instanceof NaryOperatorNode && node.operator == op;
 }
 
-
+/**
+ * Top-down recursive application of the distributive law.
+ *
+ * 1. A * (B + C) => A * B + A * C
+ * 2. A + (B * C) => (A + B) * (A + C) (same as 1, with roles of operators reversed)
+ */
 export function distributiveLaw(
     expressionNode: ExpressionNode, // A * (B + C)
     distributeWithCanOp: string = '*', // *
@@ -60,5 +65,10 @@ export function distributiveLaw(
         }
     }
 
-    return expressionNode;
+    /**
+     * In this case: a+a(b+c), the associativity after the distribution, a+(ab+ac),
+     * is not applied to the top level as you can see. So, we need to apply it here,
+     * to get the wanted: a+ab+ac.
+     */
+    return associativityLaw(expressionNode);
 }
