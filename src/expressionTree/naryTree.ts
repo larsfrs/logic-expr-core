@@ -42,13 +42,19 @@ export class NaryOperatorNode extends ExpressionNode {
  * and that operator is commutative & associative, build a left-associative n-ary node from
  * the binary tree "chain" instead.
  * E.g. ((A + B) + CD) => A + B + CD
+ * Important: This creates a new instance of the expression tree.
  */
 export function binaryToNaryTree(expression: ExpressionNode): ExpressionNode {
 
-    if (expression instanceof LeafNode) return expression;
+    if (expression instanceof LeafNode) {
+        return new LeafNode(expression.value);
+    }
 
     if (expression instanceof UnaryOperatorNode) {
-        return binaryToNaryTree(expression.left);
+        return new UnaryOperatorNode(
+            binaryToNaryTree(expression.left),
+            expression.operator
+        );
     }
 
     if (expression instanceof BinaryOperatorNode) {
@@ -74,13 +80,19 @@ export function binaryToNaryTree(expression: ExpressionNode): ExpressionNode {
 /**
  * If a n-ary node has more than 2 children, iterativley build a binary "chain" from left to right.
  * E.g. A + B + C + D  => ((A + B) + C) + D, this preserves the original left-associative structure.
+ * Important: This creates a new instance of the expression tree.
  */
 export function NaryTreeToBinaryTree(expression: ExpressionNode): ExpressionNode {
     
-    if (expression instanceof LeafNode) return expression;
+    if (expression instanceof LeafNode) {
+        return new LeafNode(expression.value);
+    }
     
     if (expression instanceof UnaryOperatorNode) {
-        return NaryTreeToBinaryTree(expression.left);
+        return new UnaryOperatorNode(
+            NaryTreeToBinaryTree(expression.left),
+            expression.operator
+        );
     }
     
     if (expression instanceof NaryOperatorNode) {
