@@ -4,8 +4,6 @@ import { getVariablesFromExpression } from "./expressionTree/expressionTreeOpera
 import { RPNToGraph, expressionToRPN } from "./expressionTree/expressionTreeParsers.js";
 import { checkAndSantizeExpression } from "./expressionTree/expressionTreeHelper.js";
 
-export * from "./expressionTree/index.js";
-
 /**
  * Parses a boolean expression string into a tree structure.
  * @param expression - the expression to parse
