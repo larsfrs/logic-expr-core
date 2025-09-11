@@ -1,5 +1,6 @@
 import { ExpressionNode, BinaryOperatorNode, LeafNode, UnaryOperatorNode } from '../expressionTree/expressionTree.js';
 import { operatorEvalBoolean, booleanContext } from "../expressionTree/expressionTreeOperators.js";
+import { Marking, defaultMarking } from '../expressionTree/markings.js';
 
 
 /**
@@ -7,11 +8,16 @@ import { operatorEvalBoolean, booleanContext } from "../expressionTree/expressio
  * to see if we can apply a rule to two of them for simplifications. In binary trees, this seems to be a bit hard to do,
  * so this N-ary node is implemented to make it easier to work with such expressions.
  * 
- * 1 child => UnaryOperatorNode
+ * 1 child => UnaryOperatorNode (as before)
  * 2+ children => NaryOperatorNode
  */
 export class NaryOperatorNode extends ExpressionNode {
-    constructor(public children: ExpressionNode[], public operator: string) {
+    constructor(
+        public children: ExpressionNode[],
+        public operator: string,
+        public root?: true,
+        public mark: Marking = defaultMarking
+    ) {
         super();
     }
 
@@ -21,19 +27,30 @@ export class NaryOperatorNode extends ExpressionNode {
         }, this.children[0].evaluate(variables));
     }
 
-    toString(parentPrecedence: number = 0, isRightChild: boolean = false, sorted: boolean = false): string {
+    toString(
+        parentPrecedence: number = 0,
+        isRightChild: boolean = false,
+        sorted: boolean = false,
+        settings: { latex: boolean } = { latex: false }
+    ): string {
         const precedence = booleanContext.operatorMetadata[this.operator].precedence || 0;
-        const childStrings = this.children.map(child => child.toString(precedence, isRightChild, sorted));
+        const childStrings = this.children.map(child => child.toString(precedence, isRightChild, sorted, settings));
 
         // sort children AFTER generating their string representations
-        if (sorted) {
-            childStrings.sort((a, b) => a.toString().localeCompare(b.toString()));
-        }
-        
+        if (sorted) childStrings.sort((a, b) => a.localeCompare(b));
+
+        const opString = settings.latex && booleanContext.operatorMetadata[this.operator].canonical === 'MULTIPLY'
+            ? '\\cdot ' : this.operator;
+
         // THEN join them with the operator
-        const joinedChildren = childStrings.join(`${this.operator}`);
+        let joinedChildren = childStrings.join(opString);
+        if (settings.latex && this.mark.marked) {
+            joinedChildren = `\\colorbox{${this.mark.colorGroup}}{\$${joinedChildren}\$}`;
+            joinedChildren = `\\underbrace{${joinedChildren}}_{\\text{${this.mark.type}}}`;
+        }
+
         return (precedence < parentPrecedence) ? `(${joinedChildren})` : joinedChildren;
-}
+    }
 }
 
 
@@ -47,13 +64,15 @@ export class NaryOperatorNode extends ExpressionNode {
 export function binaryToNaryTree(expression: ExpressionNode): ExpressionNode {
 
     if (expression instanceof LeafNode) {
-        return new LeafNode(expression.value);
+        return new LeafNode(expression.value, expression.root, expression.mark);
     }
 
     if (expression instanceof UnaryOperatorNode) {
         return new UnaryOperatorNode(
             binaryToNaryTree(expression.left),
-            expression.operator
+            expression.operator,
+            expression.root,
+            expression.mark
         );
     }
 
@@ -70,7 +89,7 @@ export function binaryToNaryTree(expression: ExpressionNode): ExpressionNode {
             return right;
 
         } else {
-            return new NaryOperatorNode([left, right], expression.operator);
+            return new NaryOperatorNode([left, right], expression.operator, expression.root, expression.mark);
         }
     }
 
@@ -85,13 +104,15 @@ export function binaryToNaryTree(expression: ExpressionNode): ExpressionNode {
 export function NaryTreeToBinaryTree(expression: ExpressionNode): ExpressionNode {
     
     if (expression instanceof LeafNode) {
-        return new LeafNode(expression.value);
+        return new LeafNode(expression.value, expression.root, expression.mark);
     }
     
     if (expression instanceof UnaryOperatorNode) {
         return new UnaryOperatorNode(
             NaryTreeToBinaryTree(expression.left),
-            expression.operator
+            expression.operator,
+            expression.root,
+            expression.mark
         );
     }
     
@@ -101,7 +122,9 @@ export function NaryTreeToBinaryTree(expression: ExpressionNode): ExpressionNode
             result = new BinaryOperatorNode(
                 result,
                 NaryTreeToBinaryTree(expression.children[i]),
-                expression.operator
+                expression.operator,
+                expression.root,
+                expression.mark
             );
         }
         return result;
@@ -129,7 +152,7 @@ export function NaryTreeToBinaryTree(expression: ExpressionNode): ExpressionNode
  * 2. complementLaw.test.ts, case 3
  */
 export function treeCanonicalForm(expressionNode: ExpressionNode): string {
-    return expressionNode.toString(undefined, undefined, true);
+    return expressionNode.toString(undefined, undefined, true, { latex: false });
 }
 
 
@@ -140,24 +163,30 @@ export function deepCopy(node: ExpressionNode): ExpressionNode {
     if (node instanceof UnaryOperatorNode) {
         return new UnaryOperatorNode(
             deepCopy(node.left),
-            node.operator
+            node.operator,
+            node.root,
+            node.mark
         );
     }
     if (node instanceof BinaryOperatorNode) {
         return new BinaryOperatorNode(
             deepCopy(node.left),
             deepCopy(node.right),
-            node.operator
+            node.operator,
+            node.root,
+            node.mark
         );
     }
     if (node instanceof NaryOperatorNode) {
         return new NaryOperatorNode(
             node.children.map(child => deepCopy(child)),
-            node.operator
+            node.operator,
+            node.root,
+            node.mark
         );
     }
     if (node instanceof LeafNode) {
-        return new LeafNode(node.value);
+        return new LeafNode(node.value, node.root, node.mark);
     }
     throw new Error('Unknown ExpressionNode type');
 }

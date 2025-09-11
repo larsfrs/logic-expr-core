@@ -1,25 +1,43 @@
+import { resetMarkings } from '../expressionTree/markingsUtilities.js';
 import { ExpressionNode } from '../expressionTree/expressionTree.js';
 import { deepCopy, treeCanonicalForm } from '../expressionTree/naryTree.js';
 
 
 export class ExpressionTreeHistory {
+    rootRef: ExpressionNode;
     versions: ExpressionNode[];
 
     constructor(initialNode: ExpressionNode) {
+        this.rootRef = initialNode; // reference to the root node
         this.versions = [deepCopy(initialNode)];
     }
 
+    // after each transformation law, reassign the root
+    setRoot(newRoot: ExpressionNode) {
+        this.rootRef = newRoot;
+    }
+
+    getRoot(): ExpressionNode {
+        return this.rootRef;
+    }
+
     snapshot(node: ExpressionNode) {
-        this.versions.push(deepCopy(node));
+        if (node.root === true && node !== this.rootRef) {
+            this.rootRef = node;
+        }
+        this.versions.push(deepCopy(this.rootRef));
+        resetMarkings(this.rootRef);
     }
 
     getLastVersion(): ExpressionNode {
         return this.versions[this.versions.length - 1];
     }
 
-    hasChanged(node: ExpressionNode): boolean {
-        return treeCanonicalForm(this.versions[this.versions.length - 1])
-               !== treeCanonicalForm(node);
+    hasChanged(
+        node1: ExpressionNode,
+        node2: ExpressionNode
+    ): boolean {
+        return treeCanonicalForm(node1) !== treeCanonicalForm(node2);
     }
 }
 
