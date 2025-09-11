@@ -12,21 +12,22 @@ export class ExpressionTreeHistory {
         this.versions = [deepCopy(initialNode)];
     }
 
-    // after each transformation law, reassign the root
-    setRoot(newRoot: ExpressionNode) {
-        this.rootRef = newRoot;
-    }
-
     getRoot(): ExpressionNode {
         return this.rootRef;
     }
 
+    /**
+     * First a copy of the current root is stored in the versions array.
+     * Then all markings in the tree are reset.
+     * Only then the root reference is updated, as we want to snapshot the state
+     * before the root changes and the new root is assigned.
+     */
     snapshot(node: ExpressionNode) {
+        this.versions.push(deepCopy(this.rootRef));
+        resetMarkings(this.rootRef);
         if (node.root === true && node !== this.rootRef) {
             this.rootRef = node;
         }
-        this.versions.push(deepCopy(this.rootRef));
-        resetMarkings(this.rootRef);
     }
 
     getLastVersion(): ExpressionNode {

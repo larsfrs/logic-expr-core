@@ -89,7 +89,7 @@ export function RPNToGraph(
     const stack: ExpressionNode[] = [];
 
     for (const token of rpn) {
-        // variable: leaf note
+        // variable: leaf node
         if (!allOperators[token]) {
             stack.push(new LeafNode(token));
             continue;
@@ -113,9 +113,13 @@ export function RPNToGraph(
         }
     }
 
-    return stack.length === 1 ? stack[0] : null; // return the root of the expression tree
-}
+    if (stack.length !== 1) {
+        throw new Error("Invalid RPN expression: remaining operands are without operators");
+    }
 
+    stack[0].root = true; // top level node is the root
+    return stack[0];
+}
 
 /**
  * @example evaluateExpression(
