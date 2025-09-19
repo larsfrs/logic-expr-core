@@ -15,7 +15,7 @@ export class NaryOperatorNode extends ExpressionNode {
     constructor(
         public children: ExpressionNode[],
         public operator: string,
-        public root?: true,
+        public root: boolean = false,
         public mark: Marking = defaultMarking
     ) {
         super();
@@ -82,14 +82,17 @@ export function binaryToNaryTree(expression: ExpressionNode): ExpressionNode {
 
         if (left instanceof NaryOperatorNode && left.operator === expression.operator) {
             left.children.push(right);
+            left.root ||= expression.root; // propagate root property correctly
             return left;
 
         } else if (right instanceof NaryOperatorNode && right.operator === expression.operator) {
             right.children.unshift(left);
+            right.root ||= expression.root; // propagate root property correctly
             return right;
 
         } else {
-            return new NaryOperatorNode([left, right], expression.operator, expression.root, expression.mark);
+            const root = expression.root || left.root || right.root; // determine root property correctly
+            return new NaryOperatorNode([left, right], expression.operator, root, expression.mark);
         }
     }
 

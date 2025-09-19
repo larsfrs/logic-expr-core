@@ -5,7 +5,7 @@ const allOperators = booleanContext.operatorMetadata;
 
 export abstract class ExpressionNode {
     mark: Marking = defaultMarking;
-    root?: true; // optional property that can only be `true`
+    root: boolean = false;
 
     // args optional, so that we can get default values when we omit the args in the method call
     abstract toString(
@@ -21,7 +21,7 @@ export class UnaryOperatorNode extends ExpressionNode {
     constructor(
         public left: ExpressionNode,
         public operator: string,
-        public root?: true,
+        public root: boolean = false,
         public mark: Marking = defaultMarking
     ) {
         super();
@@ -61,7 +61,7 @@ export class BinaryOperatorNode extends ExpressionNode {
         public left: ExpressionNode,
         public right: ExpressionNode,
         public operator: string,
-        public root?: true,
+        public root: boolean = false,
         public mark: Marking = defaultMarking
     ) {
         super();
@@ -102,7 +102,7 @@ export class BinaryOperatorNode extends ExpressionNode {
 export class LeafNode extends ExpressionNode {
     constructor(
         public value: string,
-        public root?: true,
+        public root: boolean = false,
         public mark: Marking = defaultMarking
     ) {
         super();
