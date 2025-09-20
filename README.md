@@ -1,36 +1,63 @@
 # Logical Expressions Core Module
 
-[NPM Package Page](https://www.npmjs.com/package/logic-expr-core) | [Examples](docs/examples.md) | [Development Setup](docs/dev-setup.md)
+[NPM Package Page](https://www.npmjs.com/package/logic-expr-core) | [Code Examples](docs/examples.md) | [Development Setup](docs/dev-setup.md)
 
 ## Description
 
 A TypeScript module that parses, transforms, derives and evaluates logic expressions. Can be easily extended to support more operators, variables, notations, etc.
 
+## Quick Examples
+
+(See more in [demo/README.md](demo/README.md))
+
+#### Transform `a'(ab'+c)'` to it's expanded DNF using boolean algebra:
+<div align="center">
+    <img src="./docs/example_transform.png" width="400" />
+</div>
+
 ## Features
 
-- parse string of expression to RPN (Reverse Polish Notation) `a*!(b|c) => a b c | ! *`
+- parse string of expression to RPN (Reverse Polish Notation)
+    - `a*!(b|c) => a b c | ! *`
     - handle different notations like postfix and prefix, add/omit "and" operators, etc.
 - parse RPN to a binary AST (Abstract Syntax Tree)
     ```
     BinaryOperatorNode (AND)
-    ├── VariableNode (a)
+    ├── LeafNode (a)
     ├── UnaryOperatorNode (NOT)
     │   └── BinaryOperatorNode (OR)
-    │       ├── VariableNode (b)
-    │       └── VariableNode (c)
+    │       ├── LeafNode (b)
+    │       └── LeafNode (c)
     ```
 - evaluate binary AST to boolean value
+    ```typescript
+    evaluateExpression("a b c | ! *", { a: true, b: false, c: true }, booleanContext);
     ```
-    BinaryOperatorNode.evaluate(a=true, b=false, c=true) => false
+    - returns `true`
+- turn binary AST to n-ary AST (more than 2 children per node)
     ```
-
-## In development
-
-- transform AST to CNF (Conjunctive Normal Form) and DNF (Disjunctive Normal Form)
+    NaryOperatorNode (AND)
+    ├── LeafNode (a)
+    ├── LeafNode (b)
+    └── LeafNode (c)
+    ```
+- apply transformative laws to the AST
+    - e.g. distributive law, absorption law, etc.
+- transform the AST to different normal forms (NNF, DNF)
+    - show every step of the transformation and output a list of transformations
+- transform AST to DNF (Disjunctive Normal Form)
     - specifically, show every step of the transformation and output a list of transformations
-- equivalence checking (using truth tables, CNF and DNF, etc.)
 - visualization of the expression tree and transformations (maybe)
 
+## In development
+- equivalence checking (using truth tables, CNF and DNF, etc.)
+
+
+## Goal
+- create a module for visualizing transformations of expressions in boolean algebra
+- show through the code how to implement a parser, AST, evaluator, etc. in TypeScript
+- make it easy to extend and customize for different use cases
+- keep it small and simple, without unnecessary dependencies
 
 ## Installation
 

@@ -1,10 +1,22 @@
 {
   "name": "logic-expr-core",
   "exports": {
-    ".": "./dist/index.js",
-    "./laws": "./dist/laws/index.js",
-    "./transformations": "./dist/transformations/index.js",
-    "./expressionTree": "./dist/expressionTree/index.js"
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./laws": {
+      "import": "./dist/laws/index.mjs",
+      "require": "./dist/laws/index.js"
+    },
+    "./transformations": {
+      "import": "./dist/transformations/index.mjs",
+      "require": "./dist/transformations/index.js"
+    },
+    "./expressionTree": {
+      "import": "./dist/expressionTree/index.mjs",
+      "require": "./dist/expressionTree/index.js"
+    }
   },
   "version": "0.1.0",
   "main": "dist/index.js",

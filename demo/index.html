@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Logic Expression Demo</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <style>
+            #history {
+                margin-top: 2em;
+                padding: 1em;
+                min-height: 2em;
+                white-space: pre-line;
+                background-color: #f0f0f0;
+            }
+            #raw-output {
+                margin-top: 2em;
+                padding: 1em;
+                min-height: 2em;
+                white-space: pre-line;
+                background-color: #e0e0e0;
+            }
+        </style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+            integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+            crossorigin="anonymous">
+    </head>
+    <body>
+        <h1>Logic Expression Transformation Demo</h1>
+        <form id="expr-form">
+            <input id="expr-input" type="text" placeholder="Enter logic expression (e.g. a+b')"
+            size="40" autocomplete="off" maxlength="12" />
+            <button type="submit">Transform</button>
+        </form>
+        <h3>Transformation History (rendered with KaTeX):</h3>
+        <div id="history"></div>
+        <h3>Raw Output:</h3>
+        <div id="raw-output"></div>
+        <script type="module" src="src/main.ts"></script>
+    </body>
+</html>

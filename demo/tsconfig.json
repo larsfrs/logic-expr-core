@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "logic-expr-core": ["../"], // Adjust path as needed
+      "logic-expr-core/transformations": ["../dist/transformations"],
+      "logic-expr-core/expressionTree": ["../dist/expressionTree/"]
+    },
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
+  }
+}

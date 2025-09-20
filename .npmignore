@@ -2,6 +2,7 @@
 src/
 node_modules/
 test/
+demo/
 
 # IDEs
 .vscode/
