@@ -15,7 +15,8 @@ beforeAll(() => {
         ["(a+b)!c", "(a+b)*!c"],          // case 3b
         ["(a+b)(c+d)", "(a+b)*(c+d)"],    // case 4
         ["a!b", "a*!b"],                  // case 5
-        ["a!!!b", "a*!!!b"]
+        ["a!!!b", "a*!!!b"],
+        ["(a+(bc))'", "(a+(b*c))'"]
     ]
 
     inputPrefixNot = [
@@ -25,7 +26,8 @@ beforeAll(() => {
         ["!!(a+!a)*!(a*a)", "(a+a')''*(a*a)'"],         // handle multiple NOT's before and after brackets
         ["!!!(!a+!(!a+b))", "(a'+(a'+b)')'''"],
         ["!a*!b*!!(!!a+b)+!c", "a'*b'*(a''+b)''+c'"],
-        ["!(!a)!(!a)", "(a')'(a')'"]                    // handle consecutive brackets 
+        ["!(!a)!(!a)", "(a')'(a')'"],                   // handle consecutive brackets 
+        ["!(a+(b*c))", "(a+(b*c))'"]
     ];
 });
 

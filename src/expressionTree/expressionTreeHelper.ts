@@ -63,6 +63,7 @@ export function convertPrefixToPostfix(
     variables: string[] = [],
     symbol: string = '!',
     changeSymbol: string = "'",
+    maxIterations: number = expression.length * 2
 ): string {
 
     // we do this right at the beginning to avoid a lot of unnecessary checks later
@@ -70,66 +71,74 @@ export function convertPrefixToPostfix(
         throw new Error("Unbalanced parentheses in expression");
     }
 
-    let newExpression: string[] = [];
+    let result: string[] = [];
     let stack: number[] = [];
-    let currentChar: string;
-    let nextChar: string | undefined = '';
-    let symbolCount = 0; // basically how many ! symbols are in a row in front of either a variable or a (
+    let i = 0;
+    let counter = 0;
 
-    for (let i = 0; i < expression.length; i++) {
-        currentChar = expression[i];
-        nextChar = expression[i + 1];
+    while (i < expression.length) {
+        let currentChar = expression[i];
 
-        if (currentChar === symbol) { // if ! detected
-            symbolCount = 1;
-
-            if (nextChar === undefined) {
-                throw new Error("Invalid expression: trailing '!' without operand");
+        // handle the symbols
+        if (currentChar === symbol) {
+            let symCount = 1;
+            
+            // count consecutive symbols
+            while (i + symCount < expression.length && expression[i + symCount] === symbol) {
+                symCount++;
             }
+            i += symCount;
+            let nextChar = expression[i];
 
-            while (nextChar === symbol) { // keep counting !'s
-                symbolCount++;
+            if (variables.includes(nextChar)) {
+                result.push(nextChar + changeSymbol.repeat(symCount));
                 i++;
-
-                if (i + 1 < expression.length) {
-                    currentChar = expression[i];
-                    nextChar = expression[i + 1];
-                } else {
-                    throw new Error("Invalid expression: trailing '!' without operand");
-                }
-            }
-
-            // at this point all !'s are basically registered, now decide if a open parenthesis or a variable follows
-            if (i + 1 < expression.length && variables.includes(nextChar)) {
-                newExpression.push(nextChar + changeSymbol.repeat(symbolCount));
+            } else if (nextChar === '(') {
+                stack.push(symCount);
+                result.push('(');
                 i++;
             } else {
-                if (nextChar === '(') {
-                    stack.push(symbolCount); // here we keep track of all open parentheses and how many !'s are in front of them
-                    newExpression.push('(');
-                    i++; // skip the (
-                }
+                throw new Error(`Invalid expression: ${symbol} not followed by variable or '('.`);
             }
-        } else if (variables.includes(currentChar)) { // just simple variable
-            newExpression.push(currentChar);
+        }
 
-        // here we now close the parentheses and add the trailing "'" symbols
-        } else if (currentChar === ')' && stack.length !== 0) { // if )
-            const lastSymbolCount = stack.pop()!;
-            newExpression.push(')');
-            for (let j = 1; j < lastSymbolCount; j++) {
-                newExpression.push(changeSymbol);
+        // variable handling
+        else if (variables.includes(currentChar)) {
+            result.push(currentChar);
+            i++;
+        }
+
+        // paranthesis handling
+        else if (currentChar === '(') {
+            stack.push(0); // No negation for this parenthesis
+            result.push('(');
+            i++;
+        }
+
+        // closing parenthesis handling
+        else if (currentChar === ')') {
+            result.push(')');
+            let symCount = stack.pop()!;
+            if (symCount > 0) {
+                result.push(changeSymbol.repeat(symCount));
             }
-            newExpression.push(changeSymbol);
+            i++;
+        }
 
-        // operators
-        } else {
-            newExpression.push(currentChar);
+        // operator handling
+        else {
+            result.push(currentChar);
+            i++;
+        }
+
+        counter++;
+        if (counter > maxIterations) {
+            throw new Error("Invalid Expression: maxIterations exceeded in convertPrefixToPostfix");
         }
     }
 
-    return newExpression.join('');
-};
+    return result.join('');
+}
 
 /**
  * @example convertPostfixToPrefix("a'*b'*c'", "'") // returns !a!b!c
