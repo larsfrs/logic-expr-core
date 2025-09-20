@@ -15,9 +15,8 @@ export function associativityLawChildren(
 }
 
 export function associativityLaw(
-    node: ExpressionNode,
+    node: NaryOperatorNode,
 ): ExpressionNode {
-    if (!(node instanceof NaryOperatorNode)) return node;
     node.children = associativityLawChildren(node.children, node.operator);
     return node;
 }
