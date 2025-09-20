@@ -1,4 +1,5 @@
-import { ExpressionNode, LeafNode, UnaryOperatorNode, BinaryOperatorNode } from "../expressionTree/expressionTree.js";
+import { ExpressionTreeHistory } from "../transformations/expressionTreeHistory.js";
+import { ExpressionNode, LeafNode, UnaryOperatorNode } from "../expressionTree/expressionTree.js";
 import { NaryOperatorNode, treeCanonicalForm } from '../expressionTree/naryTree.js';
 
 
@@ -13,7 +14,8 @@ export function complementLaw(
     expressionNode: ExpressionNode,
     operator: string = "+", // *
     complementOperator: string = "!", // "!"
-    resultingNode: LeafNode = new LeafNode('1') // new LeafNode('0')
+    resultingNode: LeafNode = new LeafNode('1'), // new LeafNode('0')
+    history?: ExpressionTreeHistory
 ): ExpressionNode {
 
     if (expressionNode instanceof LeafNode) {
@@ -21,13 +23,25 @@ export function complementLaw(
     }
 
     else if (expressionNode instanceof UnaryOperatorNode) {
-        expressionNode.left = complementLaw(expressionNode.left, operator, complementOperator, resultingNode);
+        expressionNode.left = complementLaw(
+            expressionNode.left,
+            operator,
+            complementOperator,
+            resultingNode,
+            history
+        );
         return expressionNode;
     }
 
     else if (expressionNode instanceof NaryOperatorNode) {
         expressionNode.children = expressionNode.children.map(child =>
-            complementLaw(child, operator, complementOperator, resultingNode)
+            complementLaw(
+                child,
+                operator,
+                complementOperator,
+                resultingNode,
+                history
+            )
         );
 
         if (expressionNode.operator === operator) {
@@ -64,6 +78,15 @@ export function complementLaw(
 
                     // replace first element of pair with resulting node, and second one with a placeholder to remove later
                     const [first, second] = [nonUnaryIndices[0], unaryIndices[0]].sort((a, b) => a - b);
+
+                    if (history) {
+                        expressionNode.children[first].mark =
+                            { marked: true, type: 'Complement Law', colorGroup: "palegreen" };
+                        expressionNode.children[second].mark =
+                            { marked: true, type: 'Complement Law', colorGroup: "palegreen" };
+                        history.snapshot(expressionNode);
+                    }
+
                     expressionNode.children.splice(first, 1, resultingNode);
                     expressionNode.children.splice(second, 1, new LeafNode('placeholder'));
                 }
@@ -74,7 +97,9 @@ export function complementLaw(
 
 
             if (expressionNode.children.length === 1) {
-                return expressionNode.children[0]; // return the single child
+                expressionNode.children[0].root = expressionNode.root;
+                return expressionNode.children[0];
+                // TODO: unhandled associativity case
             } else {
                 // 0 as a case will not happen, because we only remove pairs of a and !a
 

@@ -1,3 +1,4 @@
+import { ExpressionTreeHistory } from "../transformations/expressionTreeHistory.js";
 import { ExpressionNode, LeafNode, UnaryOperatorNode } from "../expressionTree/expressionTree.js";
 import { NaryOperatorNode } from '../expressionTree/naryTree.js';
 
@@ -10,7 +11,8 @@ import { NaryOperatorNode } from '../expressionTree/naryTree.js';
 export function dominantLaw(
     expressionNode: ExpressionNode,
     operator: string = '+', // *
-    dominantElement: LeafNode = new LeafNode('0') // new LeafNode('1')
+    dominantElement: LeafNode = new LeafNode('0'), // new LeafNode('1')
+    history?: ExpressionTreeHistory
 ) : ExpressionNode {
 
     if (expressionNode instanceof LeafNode) {
@@ -18,21 +20,37 @@ export function dominantLaw(
     }
 
     if (expressionNode instanceof UnaryOperatorNode) {
-        expressionNode.left = dominantLaw(expressionNode.left, operator, dominantElement);
+        expressionNode.left = dominantLaw(
+            expressionNode.left,
+            operator,
+            dominantElement,
+            history
+        );
         return expressionNode;
     }
 
     if (expressionNode instanceof NaryOperatorNode) {
         expressionNode.children = expressionNode.children.map(child =>
-            dominantLaw(child, operator, dominantElement)
+            dominantLaw(child, operator, dominantElement, history)
         );
         if (expressionNode.operator === operator) {
             // if there is a dominantElement in the children, return dominantElement
             const hasDominant = expressionNode.children.some(child => {
-            return child instanceof LeafNode && child.value === dominantElement.value;
+                return child instanceof LeafNode
+                    && child.value === dominantElement.value;
             });
 
-            if (hasDominant) return dominantElement;
+            if (hasDominant) {
+                
+                if (history) {
+                    expressionNode.mark = { marked: true, type: 'Dominant Law', colorGroup: "palegreen" };
+                    history.snapshot(expressionNode);
+                }
+
+                // TODO: handle associativity, as well as root property here
+
+                return dominantElement;
+            }
         }
     }
 

@@ -2,6 +2,7 @@ import { identityLaw } from "../laws/identityLaw.js";
 import { dominantLaw } from "../laws/dominantLaw.js";
 import { complementLaw } from "../laws/complementLaw.js";
 import { ExpressionNode, LeafNode } from "../expressionTree/expressionTree.js";
+import { ExpressionTreeHistory } from "../transformations/expressionTreeHistory.js";
 
 /**
  * id & comp & dom laws combined
@@ -11,19 +12,20 @@ import { ExpressionNode, LeafNode } from "../expressionTree/expressionTree.js";
  * TODO: combine some of the laws, to avoid multiple passes over the tree.
  */
 export function combinedConstantLaws(
-    expressionNode: ExpressionNode
+    expressionNode: ExpressionNode,
+    history?: ExpressionTreeHistory
 ) { 
     // 1. apply complement law to create 1s and 0s
-    expressionNode = complementLaw(expressionNode, '+', '!', new LeafNode('1'));
-    expressionNode = complementLaw(expressionNode, '*', '!', new LeafNode('0'));
+    expressionNode = complementLaw(expressionNode, '+', '!', new LeafNode('1'), history);
+    expressionNode = complementLaw(expressionNode, '*', '!', new LeafNode('0'), history);
 
     // 2. apply dominant law to get rid of subtrees
-    expressionNode = dominantLaw(expressionNode, '+', new LeafNode('1'));
-    expressionNode = dominantLaw(expressionNode, '*', new LeafNode('0'));
+    expressionNode = dominantLaw(expressionNode, '+', new LeafNode('1'), history);
+    expressionNode = dominantLaw(expressionNode, '*', new LeafNode('0'), history);
 
     // 3. apply identity law to remove 1s and 0s again
-    expressionNode = identityLaw(expressionNode, '*', new LeafNode('1'));
-    expressionNode = identityLaw(expressionNode, '+', new LeafNode('0'));
+    expressionNode = identityLaw(expressionNode, '*', new LeafNode('1'), history);
+    expressionNode = identityLaw(expressionNode, '+', new LeafNode('0'), history);
 
     return expressionNode;
 }

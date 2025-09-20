@@ -1,3 +1,4 @@
+import { ExpressionTreeHistory } from "../transformations/expressionTreeHistory.js";
 import { ExpressionNode, LeafNode, UnaryOperatorNode } from "../expressionTree/expressionTree.js";
 import { NaryOperatorNode } from '../expressionTree/naryTree.js';
 
@@ -12,6 +13,7 @@ export function identityLaw(
     expressionNode: ExpressionNode,
     operator: string = "+", // *
     identityElement: LeafNode = new LeafNode('0'), // new LeafNode('1')
+    history?: ExpressionTreeHistory
 ): ExpressionNode {
 
     if (expressionNode instanceof LeafNode) {
@@ -19,30 +21,51 @@ export function identityLaw(
     }
 
     if (expressionNode instanceof UnaryOperatorNode) {
-        expressionNode.left = identityLaw(expressionNode.left, operator, identityElement);
+        expressionNode.left = identityLaw(
+            expressionNode.left,
+            operator,
+            identityElement,
+            history
+        );
         return expressionNode;
     }
 
     if (expressionNode instanceof NaryOperatorNode) {
         expressionNode.children = expressionNode.children.map(child =>
-            identityLaw(child, operator, identityElement)
+            identityLaw(
+                child,
+                operator,
+                identityElement,
+                history
+            )
         );
 
         if (expressionNode.operator === operator) {
 
             // remove identity element from children
-            expressionNode.children = expressionNode.children.filter(child => {
+            const newChildren = expressionNode.children.filter(child => {
                 if (child instanceof LeafNode && child.value === identityElement.value) {
+                    if (history) {
+                        child.mark = { marked: true, type: 'Identity Law', colorGroup: "palegreen" };
+                    }
                     return false;
                 }
                 return true;
             });
 
+            if (history && newChildren.length < expressionNode.children.length) {
+                history.snapshot(expressionNode);
+            }
+
+            expressionNode.children = newChildren;
+
             if (expressionNode.children.length === 0) {
                 return identityElement;
+                // TODO: unhandled associativity case and root property here
 
             } else if (expressionNode.children.length === 1) {
                 return expressionNode.children[0];
+                // TODO: unhandled associativity case and root property here
             }
         }
     }
