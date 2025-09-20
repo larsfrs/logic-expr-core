@@ -8,19 +8,19 @@ describe('test transformation', () => {
 
     it.each(inputData)('should apply nnf transformation to $description',
         ({input, nnf}) => {
-            const result = toNNF(input, false).history.getLastVersion();
+            const result = toNNF(input, false).expressionNode;
             expect(treeCanonicalForm(result)).toEqual(treeCanonicalForm(nnf));
     });
 
     it.each(inputData)('should apply dnf transformation to $description',
         ({input, dnf}) => {
-            const result = toDNF(input).history.getLastVersion();
+            const result = toDNF(input).expressionNode;
             expect(treeCanonicalForm(result)).toEqual(treeCanonicalForm(dnf));
     });
 
     it.each(inputData)('should apply expanded dnf transformation to $description',
         ({input, expandedDnf}) => {
-            const result = toExpandedDNF(input).history.getLastVersion();
+            const result = toExpandedDNF(input).expressionNode;
             expect(treeCanonicalForm(result)).toEqual(treeCanonicalForm(expandedDnf));
     });
     

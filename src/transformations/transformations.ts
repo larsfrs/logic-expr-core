@@ -6,6 +6,7 @@ import { idempotencyLaw } from '../laws/idempotencyLaw.js';
 import { combinedConstantLaws } from '../laws/constantLaws.js';
 import { distributiveLaw } from '../laws/distributiveLaw.js';
 import { expandNormalForm, isInExpandedForm } from '../transformations/expandedForms.js';
+import { doubleNegationLaw } from 'src/laws/doubleNegationLaw.js';
 
 
 type TransformContext = {
@@ -43,15 +44,22 @@ export function toNNF(
     // replace all operators that are not AND, OR or NOT with their corresponding structural equivalents
     // expressionNode = applyStructuralEquivalents(expressionNode);
 
-    history.snapshot(expressionNode);
+    let lastVersion: ExpressionNode = expressionNode;
 
     for (let i = 0; i < HARD_LIMIT; i++) {
-        expressionNode = deMorgan(expressionNode);
-        expressionNode = idempotencyLaw(expressionNode);
-        expressionNode = combinedConstantLaws(expressionNode);
+        /**
+         * Only on the first iteration, the double negation law is applied top-down,
+         * as afterwards, only new negations in front of variables can appear,
+         * which are handled by doubleNegationLawOnce inside the law
+         * transformation functions.
+         */
+        if (i === 0) expressionNode = doubleNegationLaw(expressionNode, history);
+        expressionNode = deMorgan(expressionNode, "!", "*", "+", history);
+        expressionNode = idempotencyLaw(expressionNode, history);
+        expressionNode = combinedConstantLaws(expressionNode, history);
 
-        if (!history.hasChanged(expressionNode)) break;
-        history.snapshot(expressionNode);
+        if (!history.hasChanged(lastVersion, expressionNode)) break;
+        lastVersion = expressionNode;
 
         if (i === HARD_LIMIT - 1) {
             throw new Error(`HARD_LIMIT reached in toNNF, expressionNode: ${expressionNode}`);
@@ -69,19 +77,21 @@ export function toNNF(
  *    each conjunction consists of one or more literals which might be negated.
  */
 export function toDNF(
-    expressionNode: ExpressionNode,
+    expressionNodeArg: ExpressionNode,
     HARD_LIMIT: number = 100
 ) : TransformContext {
 
-    var { expressionNode, history } = toNNF(expressionNode, false, HARD_LIMIT);
+    let { expressionNode, history } = toNNF(expressionNodeArg, false, HARD_LIMIT);
+
+    let lastVersion: ExpressionNode = expressionNode;
 
     for (let i = 0; i < HARD_LIMIT; i++) {
-        expressionNode = distributiveLaw(expressionNode);
-        expressionNode = idempotencyLaw(expressionNode);
-        expressionNode = combinedConstantLaws(expressionNode);
+        expressionNode = distributiveLaw(expressionNode, "*", "+", history);
+        expressionNode = idempotencyLaw(expressionNode, history);
+        expressionNode = combinedConstantLaws(expressionNode, history);
 
-        if (!history.hasChanged(expressionNode)) break;
-        history.snapshot(expressionNode);
+        if (!history.hasChanged(lastVersion, expressionNode)) break;
+        lastVersion = expressionNode;
 
         if (i === HARD_LIMIT - 1) {
             throw new Error(`HARD_LIMIT reached in toDNF, expressionNode: ${expressionNode}`);
@@ -98,20 +108,19 @@ export function toDNF(
  *    with or without a negation.
  */
 export function toExpandedDNF(
-    expressionNode: ExpressionNode,
+    expressionNodeArg: ExpressionNode,
     HARD_LIMIT: number = 10
 ) : TransformContext {
 
-    var { expressionNode, history } = toDNF(expressionNode);
+    let { expressionNode, history } = toDNF(expressionNodeArg);
 
     expressionNode = expandNormalForm(expressionNode);
 
     for (let i = 0; i < HARD_LIMIT; i++) {
-        expressionNode = distributiveLaw(expressionNode);
-        expressionNode = idempotencyLaw(expressionNode);
-        expressionNode = combinedConstantLaws(expressionNode);
+        expressionNode = distributiveLaw(expressionNode, "*", "+", history);
+        expressionNode = idempotencyLaw(expressionNode, history);
+        expressionNode = combinedConstantLaws(expressionNode, history);
 
-        history.snapshot(expressionNode);
         // snapshot before break, as isInExpandedForm checks if transformation
         // is finished and not if it didn't change
         if (isInExpandedForm(expressionNode)) break;

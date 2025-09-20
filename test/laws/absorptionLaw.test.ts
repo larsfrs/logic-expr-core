@@ -179,6 +179,42 @@ describe('test absorption law transformations', () => {
                     )
                 ],
                 '+'),
+        },
+        {
+            description: 'A+B+((A+B)*(A+B+C))',
+            input: new NaryOperatorNode(
+                [
+                    new LeafNode('A'),
+                    new LeafNode('B'),
+                    new NaryOperatorNode(
+                        [
+                            new NaryOperatorNode(
+                                [
+                                    new LeafNode('A'),
+                                    new LeafNode('B'),
+                                ],
+                                '+'
+                            ),
+                            new NaryOperatorNode(
+                                [
+                                    new LeafNode('A'),
+                                    new LeafNode('B'),
+                                    new LeafNode('C'),
+                                ],
+                                '+'
+                            )
+                        ],
+                        '*'
+                    )
+                ],
+                '+'),
+            funcArgs: ['+', '*'] as absorptionLawArgs,
+            expected: new NaryOperatorNode(
+                [
+                    new LeafNode('A'),
+                    new LeafNode('B')
+                ],
+                '+')
         }
     ]
 
