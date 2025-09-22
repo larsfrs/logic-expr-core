@@ -21,7 +21,7 @@ export class NaryOperatorNode extends ExpressionNode {
         super();
     }
 
-    evaluate(variables: Map<string, boolean>): boolean {
+    evaluate(variables: Record<string, boolean>): boolean {
         return this.children.reduce((acc, child) => {
             return operatorEvalBoolean[this.operator](acc, child.evaluate(variables));
         }, this.children[0].evaluate(variables));

@@ -27,19 +27,19 @@ test('wrong inputs to parseToTree should throw an error', () => {
 test("evaluateExpression with unsanitized input", () => {
     
     // values for the variables in the globalUnsanitizedInput test cases
-    let values: Map<string, boolean>[] = [
+    let values: Record<string, boolean>[] = [
         // a*a*a*(b+c)
-        new Map([['a', true], ['b', false], ['c', true]]),
+        { 'a': true, 'b': false, 'c': true },
         // !(a*b)+c+d
-        new Map([['a', false], ['b', true], ['c', false], ['d', true]]),
+        { 'a': false, 'b': true, 'c': false, 'd': true },
         // a+(b+c)
-        new Map([['a', true], ['b', true], ['c', false]]),
+        { 'a': true, 'b': true, 'c': false },
         // !!(a*b)
-        new Map([['a', false], ['b', false]]),
+        { 'a': false, 'b': false },
         // a+!(b+!c)
-        new Map([['a', true], ['b', false], ['c', true]]),
+        { 'a': true, 'b': false, 'c': true },
         // a*a*!!!a
-        new Map([['a', true]])
+        { 'a': true }
     ];
 
     let expectedResults: boolean[] = [ true, true, true, false , true, false ];

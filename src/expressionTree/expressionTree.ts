@@ -14,7 +14,7 @@ export abstract class ExpressionNode {
         sorted?: boolean,
         settings?: { latex: boolean }
     ): string;
-    abstract evaluate(variables: Map<string, boolean>): boolean;
+    abstract evaluate(variables: Record<string, boolean>): boolean;
 }
 
 export class UnaryOperatorNode extends ExpressionNode {
@@ -27,7 +27,7 @@ export class UnaryOperatorNode extends ExpressionNode {
         super();
     }
 
-    evaluate(variables: Map<string, boolean>): boolean {
+    evaluate(variables: Record<string, boolean>): boolean {
         return operatorEvalBoolean[this.operator](
             this.left.evaluate(variables)
         );
@@ -66,7 +66,7 @@ export class BinaryOperatorNode extends ExpressionNode {
     ) {
         super();
     }
-    evaluate(variables: Map<string, boolean>): boolean {
+    evaluate(variables: Record<string, boolean>): boolean {
         return operatorEvalBoolean[this.operator](
             this.left.evaluate(variables),
             this.right.evaluate(variables)
@@ -108,8 +108,8 @@ export class LeafNode extends ExpressionNode {
         super();
     }
 
-    evaluate(variables: Map<string, boolean>): boolean {
-        return variables.get(this.value) ?? false; // default to false if variable not found
+    evaluate(variables: Record<string, boolean>): boolean {
+        return variables[this.value] ?? false; // default to false if variable not found
     }
 
     toString(

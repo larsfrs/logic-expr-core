@@ -1,17 +1,42 @@
-import { expect, test, beforeAll } from 'vitest';
+import { expect, it, describe } from 'vitest';
+import { ExpressionNode } from '../../src/expressionTree/expressionTree.js';
+import { parseToTree } from '../../src/index.js';
 
-let startingInputs: any[] = [];
 
-beforeAll(() => {
+describe('test expression tree eval', () => {
 
-    // expression, expected, and symbol, notSymbol, notNotation,
-    startingInputs: [
-        ["ab(c+aa)", { "a": true, "b": true, "c": true }, "true"],
-        ["a'b'c'", { "a": false, "b": false, "c": false }, "true"],
-        ["ab''c'aa(c+a)", { "a": true, "b": false, "c": true }, "true"],
+    const startingInputs = [
+        {
+            expression: "ab(c+aa)",
+            args: { "a": true, "b": true, "c": true },
+            result: true
+        },
+        {
+            expression: "a'b'c'",
+            args: { "a": false, "b": false, "c": false },
+            result: true
+        },
+        {
+            expression: "ab''c'aa(c+a)",
+            args: { "a": true, "b": false, "c": true },
+            result: false
+        },
+        {
+            expression: "a",
+            args: { "a": false , "b": true, "c": true },
+            result: false
+        },
+        {
+            expression: "a(b+c'(a+b'))",
+            args: { "a": true , "b": false, "c": false },
+            result: true
+        }
     ];
-});
-test('test the evaluation', () => {
-    expect(true).toBe(true);
-});
 
+    it.each(startingInputs)('eval each starting input',
+        ({expression, args, result}) => {
+            const tree: ExpressionNode = parseToTree(expression);
+            expect(tree.evaluate(args)).toBe(result);
+        }
+    );
+});

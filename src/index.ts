@@ -38,7 +38,7 @@ export function parseToTree(
  */
 export function evaluateExpression(
     expression: string,
-    values: Map<string, boolean>,
+    values: Record<string, boolean>,
     operatorContext: OperatorContext = booleanContext,
     variables: string[] = getVariablesFromExpression(expression),
     settings: { addAndOperator: boolean } = { addAndOperator: true },
@@ -46,7 +46,7 @@ export function evaluateExpression(
 
     // check if all variables are present in the values object
     for (const variable of variables) {
-        if (!values.has(variable)) {
+        if (!(variable in values)) {
             throw new Error(`Variable "${variable}" does not have a value in the provided values object. (t/f)`);
         }
     }
