@@ -27,7 +27,7 @@
     "test:watch": "vitest",
     "lint": "tsc",
     "build": "tsup src/index.ts src/laws/index.ts src/transformations/index.ts src/expressionTree/index.ts --format cjs,esm --dts",
-    "release major": "npm run build && npm version patch && npm publish && git push --follow-tags",
+    "release major": "npm run build && npm version major && npm publish && git push --follow-tags",
     "release minor": "npm run build && npm version minor && npm publish && git push --follow-tags"
   },
   "repository": {
