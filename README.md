@@ -1,6 +1,11 @@
 # Logical Expressions Core Module
 
-[NPM Package Page](https://www.npmjs.com/package/logic-expr-core) | [Documentation Index](docs/index.md) | [Code Examples](docs/code-examples.md)
+
+![NPM License](https://img.shields.io/npm/l/logic-expr-core)
+![NPM Version](https://img.shields.io/npm/v/logic-expr-core)
+![NPM Downloads](https://img.shields.io/npm/dy/logic-expr-core)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/larsfrs/logic-expr-core)
+
 
 ## Description
 
