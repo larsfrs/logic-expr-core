@@ -1,47 +1,51 @@
-import { parseToTree } from 'logic-expr-core';
-import { binaryToNaryTree } from 'logic-expr-core/expressionTree';
-import { toExpandedDNF } from 'logic-expr-core/transformations';
 import katex from 'katex';
 
-const form = document.getElementById('expr-form') as HTMLFormElement;
+// @ts-ignore
+import CalcWorker from './calc.worker?worker';
+const worker = new CalcWorker();
+
 const input = document.getElementById('expr-input') as HTMLInputElement;
 const historyDiv = document.getElementById('history') as HTMLDivElement;
-const rawOutputDiv = document.getElementById('raw-output') as HTMLDivElement;
+const selector = document.getElementById('method-select') as HTMLSelectElement;
+const limitInput = document.getElementById('limit-input') as HTMLInputElement;
 
-input.addEventListener('input', (e) => {
-    e.preventDefault();
+function calculateAndDisplay() {
     const expr = input.value.trim();
     if (!expr) {
         historyDiv.textContent = 'Please enter an expression.';
         return;
     }
-    try {
-        const tree = binaryToNaryTree(
-            parseToTree(expr, undefined, undefined, { addAndOperator: true })
-        );
-        const { expressionNode, history } = toExpandedDNF(tree);
+    historyDiv.textContent = 'Calculating...';
+
+    worker.postMessage({
+        expr,
+        method: selector.value,
+        limit: parseInt(limitInput.value)
+    });
+}
+
+worker.onmessage = (e) => {
+    if (e.data.success) {
+        const { versionsLatex, exprLatex, resultingForm } = e.data.result;
 
         let output = '';
-        for (const version of history.versions) {
-            output += version.toString(
-                undefined, undefined, undefined, { latex: true }
-            );
-
-            if (version === history.versions[0]) output += ' \\; \\text{(input expression)}';
-
-            output += ' \\\\[0.5em]'; 
+        for (let i = 0; i < versionsLatex.length; ++i) {
+            output += versionsLatex[i];
+            if (i === 0) output += ' \\; \\text{(input expression)}';
+            output += ' \\\\[0.5em]';
         }
-        output += expressionNode.toString(
-            undefined, undefined, undefined, { latex: true }
-        ) + ' \\; \\text{(expanded dnf)}';
+        output += exprLatex + ' \\; \\text{' + resultingForm + '}';
 
-        rawOutputDiv.innerHTML = output;
-        historyDiv.innerHTML = katex.renderToString(output, {
-            throwOnError: false,
-        });
-
-    } catch (err) {
-        historyDiv.textContent = 'Error: ' + (err as Error).message;
+        historyDiv.innerHTML = katex.renderToString(output, { throwOnError: false });
+    } else {
+        if (e.data.error.includes('HARD_LIMIT')) {
+            historyDiv.textContent = 'Hard limit reached during calculation. Try increasing the limit or simplifying the input expression.';
+        } else {
+            historyDiv.textContent = 'Error: ' + e.data.error;
+        }
     }
-});
- 
+};
+
+input.addEventListener('input', calculateAndDisplay);
+selector.addEventListener('change', calculateAndDisplay);
+window.addEventListener('load', calculateAndDisplay);

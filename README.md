@@ -1,10 +1,10 @@
 # Logical Expressions Core Module
 
 
-![NPM License](https://img.shields.io/npm/l/logic-expr-core)
+![NPM License](https://img.shields.io/npm/l/logic-expr-core?color=%234C1)
 ![NPM Version](https://img.shields.io/npm/v/logic-expr-core)
 ![NPM Downloads](https://img.shields.io/npm/dy/logic-expr-core)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/larsfrs/logic-expr-core)
+![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/logic-expr-core)
 
 
 ## Description
@@ -17,7 +17,7 @@ A TypeScript module that parses, transforms, derives and evaluates logic express
 
 #### Transform `a'(ab'+c)'` to it's expanded DNF using boolean algebra:
 <div align="center">
-    <img src="./docs/example_transform.png" width="400" />
+    <img src="./assets/example_transform.png" width="400" />
 </div>
 
 ## Installation
