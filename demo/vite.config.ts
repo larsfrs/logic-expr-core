@@ -8,5 +8,6 @@ export default defineConfig({
   build: {
     outDir: '../docs',
     emptyOutDir: true
-  }
+  },
+  base: '/logic-expr-core'
 });
