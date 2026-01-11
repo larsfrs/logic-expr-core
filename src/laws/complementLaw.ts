@@ -81,9 +81,9 @@ export function complementLaw(
 
                     if (history) {
                         expressionNode.children[first].mark =
-                            { marked: true, type: 'Complement Law', colorGroup: "palegreen" };
+                            { marked: true, type: 'Complement Law'};
                         expressionNode.children[second].mark =
-                            { marked: true, type: 'Complement Law', colorGroup: "palegreen" };
+                            { marked: true, type: 'Complement Law'};
                         history.snapshot(expressionNode);
                     }
 

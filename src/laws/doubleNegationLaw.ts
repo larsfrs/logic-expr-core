@@ -25,7 +25,7 @@ export function doubleNegationLaw(
                  */
                 if (node.root) node.left.left.root = node.root;
 
-                node.mark = { marked: true, type: 'Double Negation Law', colorGroup: 'lightsteelblue' };
+                node.mark = { marked: true, type: 'Double Negation Law' };
                 history.snapshot(node.left.left);
             }
 
@@ -61,7 +61,7 @@ export function doubleNegationLawOnce(
         if (node.left instanceof UnaryOperatorNode && node.left.operator === '!') {
             if (history) {
                 if (node.root) node.left.left.root = node.root;
-                node.mark = { marked: true, type: 'Double Negation Law', colorGroup: 'lightsteelblue' };
+                node.mark = { marked: true, type: 'Double Negation Law' };
                 history.snapshot(node.left.left);
             }
 

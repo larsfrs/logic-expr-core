@@ -54,7 +54,7 @@ export function deMorgan(
                  */
                 if (expressionNode.root) newNode.root = expressionNode.root;
 
-                expressionNode.mark = { marked: true, type: 'DeMorgan\'s Law', colorGroup: 'lightsteelblue' };
+                expressionNode.mark = { marked: true, type: 'DeMorgan\'s Law' };
                 history.snapshot(newNode);
 
                 /**

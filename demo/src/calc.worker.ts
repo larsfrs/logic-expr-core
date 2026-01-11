@@ -28,9 +28,9 @@ self.onmessage = (e) => {
 
         // Convert to string in the worker!
         const versionsLatex = result.history.versions.map(
-            v => v.toString(undefined, undefined, undefined, { latex: true })
+            v => v.toString(undefined, undefined, undefined, { latex: true, darkMode: true })
         );
-        const exprLatex = result.expressionNode.toString(undefined, undefined, undefined, { latex: true });
+        const exprLatex = result.expressionNode.toString(undefined, undefined, undefined, { latex: true, darkMode: true });
 
         self.postMessage({
             success: true,

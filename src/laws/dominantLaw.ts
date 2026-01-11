@@ -43,7 +43,7 @@ export function dominantLaw(
             if (hasDominant) {
                 
                 if (history) {
-                    expressionNode.mark = { marked: true, type: 'Dominant Law', colorGroup: "palegreen" };
+                    expressionNode.mark = { marked: true, type: 'Dominant Law' };
                     history.snapshot(expressionNode);
                 }
 

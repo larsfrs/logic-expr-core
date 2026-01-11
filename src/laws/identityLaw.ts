@@ -46,7 +46,7 @@ export function identityLaw(
             const newChildren = expressionNode.children.filter(child => {
                 if (child instanceof LeafNode && child.value === identityElement.value) {
                     if (history) {
-                        child.mark = { marked: true, type: 'Identity Law', colorGroup: "palegreen" };
+                        child.mark = { marked: true, type: 'Identity Law' };
                     }
                     return false;
                 }

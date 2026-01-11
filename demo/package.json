@@ -2,15 +2,17 @@
   "name": "logic-expr-core-demo",
   "version": "0.1.0",
   "private": true,
-  "type": "module",  
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.18",
     "katex": "^0.16.22",
     "logic-expr-core": "file:..",
+    "tailwindcss": "^4.1.18",
     "vite": "^7.1.5"
   },
   "devDependencies": {

@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   root: '.',
@@ -9,5 +10,8 @@ export default defineConfig({
     outDir: '../docs',
     emptyOutDir: true
   },
-  base: '/logic-expr-core'
+  base: '/logic-expr-core',
+  plugins: [
+    tailwindcss(),
+  ],
 });

@@ -77,7 +77,7 @@ export function distributiveLaw(
                      */
                     if (expressionNode.root) newNode.root = expressionNode.root;
 
-                    expressionNode.mark = { marked: true, type: 'Distributive Law', colorGroup: 'lightsteelblue' };
+                    expressionNode.mark = { marked: true, type: 'Distributive Law' };
                     history.snapshot(newNode);
                     
                     /**

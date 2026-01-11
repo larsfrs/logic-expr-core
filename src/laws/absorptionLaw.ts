@@ -47,7 +47,7 @@ export function absorptionLaw(
                         currentChildCF.includes(loopChildCF)) {
                             if (history) {
                                 expressionNode.children[index].mark =
-                                { marked: true, type: 'Absorption Law', colorGroup: "lightsteelblue" };
+                                { marked: true, type: 'Absorption Law' };
                             }
                         return false;
                     }

@@ -5,60 +5,92 @@
     <title>Logic Expression Demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles.css">
 
     <!-- KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css" integrity="sha384-Pu5+C18nP5dwykLJOhd2U4Xen7rjScHN/qusop27hdd2drI+lL5KvX7YntvT8yew" crossorigin="anonymous">
 
 </head>
-<body class="bg-gray-100">
-    <div class="max-w-3xl mx-auto my-8 bg-white p-6 border border-gray-300 rounded">
 
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-            <h1 class="text-2xl font-semibold text-gray-800 text-left w-full sm:w-auto">Logic Expression Transformation Demo</h1>
-            <a href="https://github.com/larsfrs/logic-expr-core" target="_blank"
-               class="flex items-center gap-2 hover:underline">
-                <svg width="20" height="20" viewBox="0 0 100 100" fill="currentColor"  aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" />
-                </svg>
-                View on GitHub
-            </a>
-        </div>
+<body class="bg-neutral-950 py-4 px-4">
 
-        <!-- Info Box -->
-        <div class="flex items-center gap-3 bg-blue-50 text-blue-800 border border-blue-200 rounded px-4 py-3 mb-6 text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-            The input here is limited to 8 characters and 5 calculation steps on purpose.
-            If you bypass this limit, by either editing the HTML source code, or changing the step limit input below,
-            the calculations may become more computationally intensive and take longer to complete.
-        </div>
+    <div class="grid grid-cols-8 grid-rows-[auto,1fr,1fr,1fr] gap-4 bg-neutral-950">
 
-        <!-- Form -->
-        <form id="expr-form" class="flex flex-wrap gap-3 items-center mb-6">
-            <input id="expr-input" type="text" placeholder="Enter logic expression (e.g. a+b')"
-                   autocomplete="off" maxlength="8" value="a+(a'c)'"
-                   class="flex-1 min-w-[120px] px-3 py-2 rounded border border-gray-300 bg-gray-100 text-gray-800 outline-none" />
-            <select id="method-select"
-                    class="flex-1 min-w-[120px] px-3 py-2 rounded border border-gray-300 bg-gray-100 text-gray-800 outline-none">
-                <option value="nnf">Negation Normal Form (NNF)</option>
-                <option value="dnf" selected>Disjunctive Normal Form (DNF)</option>
-                <option value="ednf">Expanded DNF</option>
-                <option value="cnf" disabled>Conjunctive Normal Form (CNF)</option>
-                <option value="ecnf" disabled>Expanded CNF</option>
-                <option value="anf" disabled>Algebraic Normal Form (ANF)</option>
-            </select>
-            <div class="flex items-center gap-2 min-w-[100px]">
-                <span class="whitespace-nowrap text-gray-600 text-sm">Step limit:</span>
-                <input id="limit-input" type="number" placeholder="5" value="5"
-                       class="w-14 px-2 py-1 rounded border border-gray-300 bg-gray-100 text-gray-800 outline-none" />
+        <!-- Top cell: stays top on all screens -->
+        <div class="col-span-8 col-start-1 row-start-1 grid-rows-1 md:col-span-6 md:col-start-2 md:row-start-1 grid-card">
+            <div class="flex flex-col sm:flex-row items-center justify-between">
+                <h1 class="text-2xl font-semibold text-slate-100 text-left w-full sm:w-auto mb-4 sm:mb-0">Logic Expression Transformation Demo</h1>
+                <a href="https://github.com/larsfrs/logic-expr-core" target="_blank"
+                    class="flex items-center gap-2 text-slate-300 hover:text-blue-400 hover:underline transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 100 100" fill="currentColor"  aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" />
+                    </svg>
+                    View on GitHub
+                </a>
             </div>
-        </form>
+        </div>
 
-        <!-- History -->
-        <h3 class="text-lg font-medium text-gray-700 mb-2">Transformation History (rendered with KaTeX):</h3>
-        <div id="history" class="border border-gray-300 rounded bg-gray-50 p-4 min-h-[4em]"></div>
+        <!-- Bottom left: 2nd on mobile, bottom left on desktop -->
+        <div class="col-span-8 col-start-1 row-start-2 md:col-span-3 md:row-span-3 md:col-start-2 md:row-start-2">
+
+            <div class="grid-card">
+                <div class="flex items-center gap-3 bg-neutral-800/80 text-slate-200 border border-neutral-600 rounded px-4 py-3 mb-4 text-sm shadow">
+                    <ul class="list-disc list-inside">
+                        <li>Below you can enter a logic expression using variables (a-z) and the operators AND (& or concatenation), OR (+), and NOT (').</li>
+                        <li>After selecting a normal form to transform to, and step limit, press Enter or Return to see the step-by-step transformation.</li>
+                    </ul>
+                </div>
+
+                <form id="expr-form">
+                    <div class="flex flex-col gap-4 mb-4">
+                        <div class="flex flex-col gap-4 flex-wrap md:flex-row">
+                            <div class="flex flex-col flex-1">
+                                <label for="expr-input" class="block text-slate-300 font-medium mb-1">Input</label>
+                                <input id="expr-input" type="text" placeholder="Enter logic expression (e.g. a+b')"
+                                    autocomplete="off" maxlength="8" value="a+(a'c)'"
+                                    class="input-field"
+                                />
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="method-select" class="block text-slate-300 mb-1 font-medium">Normal Form</label>
+                                <select id="method-select" class="input-field h-9">
+                                    <option value="nnf">Negation Normal Form (NNF)</option>
+                                    <option value="dnf" selected>Disjunctive Normal Form (DNF)</option>
+                                    <option value="ednf">Expanded DNF</option>
+                                    <option value="cnf" disabled>Conjunctive Normal Form (CNF)</option>
+                                    <option value="ecnf" disabled>Expanded CNF</option>
+                                    <option value="anf" disabled>Algebraic Normal Form (ANF)</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col w-20">
+                                <label for="limit-input" class="block text-slate-300 font-medium mb-1">Step Limit</label>
+                                <input id="limit-input" type="number" placeholder="5" value="5" class="input-field" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="flex items-center gap-3 bg-blue-950/60 text-blue-200 border border-blue-700 rounded px-4 py-3 text-sm shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" viewBox="0 -960 960 960" fill="currentColor">
+                        <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+                    </svg>
+                    The input here is limited to 8 characters and 5 calculation steps on purpose.
+                    If you bypass this limit, by either editing the HTML source code, or changing the step limit input below,
+                    the calculations may become more computationally intensive and take longer to complete.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom right: 3rd on mobile, bottom right on desktop -->
+        <div class="col-span-8 row-span-2 col-start-1 row-start-3 md:col-span-3 md:row-span-3 md:col-start-5 md:row-start-2 grid-card">
+
+            <h3 class="text-lg font-medium text-slate-100 mb-4">Transformation History (rendered with KaTeX):</h3>
+            <hr class="border-neutral-600 mb-4"/>
+            <div id="history" class="bg-neutral-800 min-h-[4em] text-slate-100"></div>
+
+        </div>
     </div>
 
     <script type="module" src="src/main.ts"></script>

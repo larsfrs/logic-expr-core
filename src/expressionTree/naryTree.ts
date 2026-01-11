@@ -1,6 +1,6 @@
 import { ExpressionNode, BinaryOperatorNode, LeafNode, UnaryOperatorNode } from '../expressionTree/expressionTree.js';
 import { operatorEvalBoolean, booleanContext } from "../expressionTree/expressionTreeOperators.js";
-import { Marking, defaultMarking } from '../expressionTree/markings.js';
+import { Marking, defaultMarking, colorMapping } from '../expressionTree/markings.js';
 
 
 /**
@@ -31,7 +31,7 @@ export class NaryOperatorNode extends ExpressionNode {
         parentPrecedence: number = 0,
         isRightChild: boolean = false,
         sorted: boolean = false,
-        settings: { latex: boolean } = { latex: false }
+        settings: { latex: boolean, darkMode: boolean } = { latex: false, darkMode: false }
     ): string {
         const precedence = booleanContext.operatorMetadata[this.operator].precedence || 0;
         const childStrings = this.children.map(child => child.toString(precedence, isRightChild, sorted, settings));
@@ -45,7 +45,7 @@ export class NaryOperatorNode extends ExpressionNode {
         // THEN join them with the operator
         let joinedChildren = childStrings.join(opString);
         if (settings.latex && this.mark.marked) {
-            joinedChildren = `\\colorbox{${this.mark.colorGroup}}{\$${joinedChildren}\$}`;
+            joinedChildren = `\\colorbox{${colorMapping[this.mark.type][settings.darkMode ? 'dark' : 'light']}}{\$${joinedChildren}\$}`;
             joinedChildren = `\\underbrace{${joinedChildren}}_{\\text{${this.mark.type}}}`;
         }
 
@@ -155,7 +155,7 @@ export function NaryTreeToBinaryTree(expression: ExpressionNode): ExpressionNode
  * 2. complementLaw.test.ts, case 3
  */
 export function treeCanonicalForm(expressionNode: ExpressionNode): string {
-    return expressionNode.toString(undefined, undefined, true, { latex: false });
+    return expressionNode.toString(undefined, undefined, true, { latex: false, darkMode: false });
 }
 
 

@@ -36,7 +36,7 @@ export function idempotencyLaw(
             } else {
                 // duplicate found, mark it if history is provided
                 if (history) {
-                    uniqueMap.get(cf)!.mark = { marked: true, type: 'Idempotency Law', colorGroup: "thistle" };
+                    uniqueMap.get(cf)!.mark = { marked: true, type: 'Idempotency Law' };
                 }
             }
         }

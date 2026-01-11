@@ -1,5 +1,5 @@
 import { operatorEvalBoolean, booleanContext } from "../expressionTree/expressionTreeOperators.js";
-import { Marking, defaultMarking } from "../expressionTree/markings.js";
+import { Marking, colorMapping, defaultMarking } from "../expressionTree/markings.js";
 
 const allOperators = booleanContext.operatorMetadata;
 
@@ -12,7 +12,7 @@ export abstract class ExpressionNode {
         parentPrecendce?: number,
         isRightChild?: boolean,
         sorted?: boolean,
-        settings?: { latex: boolean }
+        settings?: { latex: boolean, darkMode: boolean }
     ): string;
     abstract evaluate(variables: Record<string, boolean>): boolean;
 }
@@ -37,7 +37,7 @@ export class UnaryOperatorNode extends ExpressionNode {
         parentPrecedence: number = 0,
         isRightChild: boolean = false,
         sorted: boolean = false,
-        settings: { latex: boolean } = { latex: false }
+        settings: { latex: boolean, darkMode: boolean } = { latex: false, darkMode: false }
     ): string {
         const precedence = allOperators[this.operator].precedence || 0;
         const childString = this.left.toString(precedence, false, sorted, settings);
@@ -47,7 +47,7 @@ export class UnaryOperatorNode extends ExpressionNode {
 
         let tempString = `${opString}${childString}`;
         if (settings.latex && this.mark.marked) {
-            tempString = `\\colorbox{${this.mark.colorGroup}}{\$${tempString}\$}`;
+            tempString = `\\colorbox{${colorMapping[this.mark.type][settings.darkMode ? 'dark' : 'light']}}{\$${tempString}\$}`;
             tempString = `\\underbrace{${tempString}}_{\\text{${this.mark.type}}}`;
         }
 
@@ -77,7 +77,7 @@ export class BinaryOperatorNode extends ExpressionNode {
         parentPrecedence: number = 0,
         isRightChild: boolean = false,
         sorted: boolean = false,
-        settings: { latex: boolean } = { latex: false }
+        settings: { latex: boolean, darkMode: boolean } = { latex: false, darkMode: false }
     ): string {
         const precedence: number = allOperators[this.operator].precedence || 0;
         const associativity: string = allOperators[this.operator].associativity || 'left';
@@ -116,11 +116,11 @@ export class LeafNode extends ExpressionNode {
         parentPrecedence: number = 0,
         isRightChild: boolean = false,
         sorted: boolean = false,
-        settings: { latex: boolean } = { latex: false }
+        settings: { latex: boolean, darkMode: boolean } = { latex: false, darkMode: false }
     ): string {
         let returnString = this.value.toString();
         if (settings.latex && this.mark.marked) {
-            returnString = `\\colorbox{${this.mark.colorGroup}}{\$${returnString}\$}`;
+            returnString = `\\colorbox{${colorMapping[this.mark.type][settings.darkMode ? 'dark' : 'light']}}{\$${returnString}\$}`;
             returnString = `\\underbrace{${returnString}}_{\\text{${this.mark.type}}}`;
         }
         return returnString;
