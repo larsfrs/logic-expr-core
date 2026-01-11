@@ -1,6 +1,8 @@
-import { ExpressionNode, UnaryOperatorNode } from '../expressionTree/expressionTree.js';
+import { ExpressionNode, LeafNode, UnaryOperatorNode } from '../expressionTree/expressionTree.js';
 import { ExpressionTreeHistory } from '../transformations';
 import { updateParentChildren } from '../laws/recursionTools.js';
+import { NaryOperatorNode } from '../expressionTree/naryTree.js';
+import { associativityLawChildren } from '../laws/associativityLaw.js';
 
 
 /**
@@ -15,6 +17,7 @@ export function doubleNegationLaw(
 ): ExpressionNode {
 
     if (node instanceof UnaryOperatorNode && node.operator === '!') {
+
         if (node.left instanceof UnaryOperatorNode && node.left.operator === '!') {
             if (history) {
                 /**
@@ -35,16 +38,44 @@ export function doubleNegationLaw(
                 history,
                 node
             );
+        } else {
+            node.left = doubleNegationLaw(
+                node.left,
+                history,
+                node
+            );
+            return node;
         }
+
+    } else if (node instanceof UnaryOperatorNode) {
 
         node.left = doubleNegationLaw(
             node.left,
             history,
             node
         );
-    }
+        return node;
 
-    return node;
+    } else if (node instanceof NaryOperatorNode) {
+
+        node.children = associativityLawChildren(
+            node.children.map(child =>
+                doubleNegationLaw(
+                    child,
+                    history,
+                    node
+                )
+            ),
+            node.operator
+        );
+        return node;
+
+    } else if (node instanceof LeafNode) {
+        return node;
+    }
+    else {
+        return node;
+    }
 }
 
 /**
