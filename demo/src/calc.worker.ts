@@ -19,7 +19,7 @@ self.onmessage = (e) => {
                 resultingForm = '(DNF)';
                 break;
             case 'ednf':
-                result = toExpandedDNF(tree, limit);
+                result = toExpandedDNF(tree, undefined, limit);
                 resultingForm = '(expanded DNF)';
                 break;
             default:
