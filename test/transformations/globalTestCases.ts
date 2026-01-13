@@ -4,7 +4,15 @@ import { NaryOperatorNode } from '../../src/expressionTree/naryTree.js';
 
 export const inputData = [
         {
-            description: "A(AB)'CC", // A(A'+B')C (nnf) -> AB'C (dnf) (expanded dnf)
+            /**
+             * Starting: A(AB)'CC
+             * NNF:      A(A'+B')C
+             * DNF:      AB'C
+             * E.DNF:    AB'C (no change)
+             * KNF:
+             * E.KNF:
+             */
+            description: "A(AB)'CC",
             variables: new Set<string>(['A', 'B', 'C']),
             input:  new NaryOperatorNode(
                 [
