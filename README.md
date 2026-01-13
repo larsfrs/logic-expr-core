@@ -11,13 +11,10 @@
 
 A TypeScript module that parses, transforms, derives and evaluates logic expressions. Can be easily extended to support more operators, variables, notations, etc.
 
-## Quick Examples
+## Demo [(try it out!)](https://larsfrs.github.io/logic-expr-core/)
 
-(Test more examples using the demo, see [demo/README.md](demo/README.md))
-
-#### Transform `a'(ab'+c)'` to it's expanded DNF using boolean algebra:
 <div align="center">
-    <img src="./assets/example_transform.png" width="400" />
+    <img src="./assets/demo.gif" />
 </div>
 
 ## Installation
