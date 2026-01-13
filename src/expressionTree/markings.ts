@@ -26,30 +26,30 @@ export const lightColorGroups = [
 ] as const;
 
 export const darkColorGroups = [
-    'midnightblue',
-    'seagreen',
-    'indigo',
-    'saddlebrown',
-    'darkslategray',
-    'royalblue',
-    'darkgreen',
-    'purple',
-    'chocolate',
-    'black'
+    '#334155', // slate-800
+    '#374151', // gray-800
+    '#4b5563', // gray-700
+    '#1e293b', // slate-900
+    '#475569', // slate-700
+    '#0f172a', // navy/blue-black
+    '#365314', // olive/dark green
+    '#7c3aed', // muted purple
+    '#78350f', // muted brown
+    '#be185d', // muted magenta
 ] as const;
 
 
 export const colorMapping: Record<typeof markingTypes[number], { light: typeof lightColorGroups[number], dark: typeof darkColorGroups[number] }> = {
-    'Distributive Law': { light: 'lightsteelblue', dark: 'midnightblue' },
-    'Idempotency Law': { light: 'palegreen', dark: 'seagreen' },
-    'DeMorgan\'s Law': { light: 'thistle', dark: 'indigo' },
-    'Absorption Law': { light: 'peachpuff', dark: 'saddlebrown' },
-    'Identity Law': { light: 'gray', dark: 'darkslategray' },
-    'Complement Law': { light: 'steelblue', dark: 'royalblue' },
-    'Associativity Law': { light: 'green', dark: 'darkgreen' },
-    'Commutativity Law': { light: 'orchid', dark: 'purple' },
-    'Double Negation Law': { light: 'darkorange', dark: 'chocolate' },
-    'Dominant Law': { light: 'dimgray', dark: 'black' },
+    'Distributive Law': { light: 'lightsteelblue', dark: '#334155' },
+    'Idempotency Law': { light: 'palegreen', dark: '#374151' },
+    'DeMorgan\'s Law': { light: 'thistle', dark: '#4b5563' },
+    'Absorption Law': { light: 'peachpuff', dark: '#1e293b' },
+    'Identity Law': { light: 'gray', dark: '#475569' },
+    'Complement Law': { light: 'steelblue', dark: '#0f172a' },
+    'Associativity Law': { light: 'green', dark: '#365314' },
+    'Commutativity Law': { light: 'orchid', dark: '#7c3aed' },
+    'Double Negation Law': { light: 'darkorange', dark: '#78350f' },
+    'Dominant Law': { light: 'dimgray', dark: '#be185d' },
 };
 
 /**
