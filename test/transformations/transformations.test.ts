@@ -18,9 +18,14 @@ describe('test transformation', () => {
             expect(treeCanonicalForm(result)).toEqual(treeCanonicalForm(dnf));
     });
 
+    /**
+     * Sometimes variables get lost before the expanding dnf step. Which then reuslts
+     * in them not bein added back in the expanded dnf step.
+     * To avoid that, we pass in the full set of variables to the toExpandedDNF function.
+     */
     it.each(inputData)('should apply expanded dnf transformation to $description',
-        ({input, expandedDnf}) => {
-            const result = toExpandedDNF(input).expressionNode;
+        ({input, expandedDnf, variables}) => {
+            const result = toExpandedDNF(input, variables).expressionNode;
             expect(treeCanonicalForm(result)).toEqual(treeCanonicalForm(expandedDnf));
     });
     

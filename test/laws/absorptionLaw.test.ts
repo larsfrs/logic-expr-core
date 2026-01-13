@@ -215,6 +215,73 @@ describe('test absorption law transformations', () => {
                     new LeafNode('B')
                 ],
                 '+')
+        },
+        {
+            description: 'A(E+GF) + (FG+E)ACE', // it should recognize the biggest common subexpression A(E+FG)
+                                                // regardless of the commutativity and complexity.
+            input: new NaryOperatorNode(
+                [
+                    new NaryOperatorNode(
+                        [
+                            new LeafNode('A'),
+                            new NaryOperatorNode(
+                                [
+                                    new LeafNode('E'),
+                                    new NaryOperatorNode(
+                                        [
+                                            new LeafNode('G'),
+                                            new LeafNode('F'),
+                                        ],
+                                        '*'
+                                    )
+                                ],
+                                '+'
+                            )
+                        ],
+                        '*'
+                    ),
+                    new NaryOperatorNode(
+                        [   
+                        new NaryOperatorNode(
+                            [
+                                new NaryOperatorNode(
+                                    [
+                                        new LeafNode('F'),
+                                        new LeafNode('G'),
+                                    ],
+                                    '*'
+                                ),
+                                new LeafNode('E'),
+                            ],
+                            '+'
+                        ),
+                        new LeafNode('A'),
+                        new LeafNode('C'),
+                        new LeafNode('E'),
+                    ],
+                    '*')
+                ],
+                '+'),
+            funcArgs: ['+', '*'] as absorptionLawArgs,
+            expected: new NaryOperatorNode(
+                    [
+                        new LeafNode('A'),
+                        new NaryOperatorNode(
+                            [
+                                new LeafNode('E'),
+                                new NaryOperatorNode(
+                                    [
+                                        new LeafNode('G'),
+                                        new LeafNode('F'),
+                                    ],
+                                    '*'
+                                )
+                            ],
+                            '+'
+                        )
+                    ],
+                '*'
+            )
         }
     ]
 

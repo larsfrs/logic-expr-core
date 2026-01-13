@@ -5,8 +5,9 @@ import { deMorgan } from '../laws/deMorganLaw.js';
 import { idempotencyLaw } from '../laws/idempotencyLaw.js'; 
 import { combinedConstantLaws } from '../laws/constantLaws.js';
 import { distributiveLaw } from '../laws/distributiveLaw.js';
-import { expandNormalForm, isInExpandedForm } from '../transformations/expandedForms.js';
-import { doubleNegationLaw } from 'src/laws/doubleNegationLaw.js';
+import { expandNormalForm, getVariablesFromTree, isInExpandedForm } from '../transformations/expandedForms.js';
+import { doubleNegationLaw } from '../laws/doubleNegationLaw.js';
+import { absorptionLaw } from '../laws/absorptionLaw.js';
 
 
 type TransformContext = {
@@ -53,10 +54,15 @@ export function toNNF(
          * which are handled by doubleNegationLawOnce inside the law
          * transformation functions.
          */
-        if (i === 0) expressionNode = doubleNegationLaw(expressionNode, history);
+        if (i === 0) {
+            expressionNode = doubleNegationLaw(expressionNode, history);
+            // ToDo: flatten tree if needed
+        }
         expressionNode = deMorgan(expressionNode, "!", "*", "+", history);
         expressionNode = idempotencyLaw(expressionNode, history);
         expressionNode = combinedConstantLaws(expressionNode, history);
+        expressionNode = absorptionLaw(expressionNode, "*", "+", history);
+        expressionNode = absorptionLaw(expressionNode, "+", "*", history);
 
         if (!history.hasChanged(lastVersion, expressionNode)) break;
         lastVersion = expressionNode;
@@ -89,6 +95,8 @@ export function toDNF(
         expressionNode = distributiveLaw(expressionNode, "*", "+", history);
         expressionNode = idempotencyLaw(expressionNode, history);
         expressionNode = combinedConstantLaws(expressionNode, history);
+        expressionNode = absorptionLaw(expressionNode, "*", "+", history);
+        expressionNode = absorptionLaw(expressionNode, "+", "*", history);
 
         if (!history.hasChanged(lastVersion, expressionNode)) break;
         lastVersion = expressionNode;
@@ -106,15 +114,19 @@ export function toDNF(
  * Expanded Disjunctive Normal Form:
  * 1. Every conjunction contains each literal occuring in the originial expression,
  *    with or without a negation.
+ * 
+ * Notes:
+ * - Absorption law is not applied here, as it would defeat the purpose of expanding the DNF.
  */
 export function toExpandedDNF(
     expressionNodeArg: ExpressionNode,
+    variables: Set<string> = getVariablesFromTree(expressionNodeArg),
     HARD_LIMIT: number = 10
 ) : TransformContext {
 
     let { expressionNode, history } = toDNF(expressionNodeArg);
 
-    expressionNode = expandNormalForm(expressionNode);
+    expressionNode = expandNormalForm(expressionNode, variables);
 
     for (let i = 0; i < HARD_LIMIT; i++) {
         expressionNode = distributiveLaw(expressionNode, "*", "+", history);

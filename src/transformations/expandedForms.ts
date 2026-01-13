@@ -35,7 +35,7 @@ export function getVariablesFromTree(
  */
 export function expandNormalForm(
     expressionNode: ExpressionNode,
-    variables: Set<string> = getVariablesFromTree(expressionNode),
+    variables: Set<string>,
     conjunctionOp: string = '*', // default DNF
     disjunctionOp: string = '+' // default DNF
 ): ExpressionNode {
