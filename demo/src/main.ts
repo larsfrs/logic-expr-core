@@ -1,5 +1,7 @@
 import katex from 'katex';
 
+import type { Settings } from 'logic-expr-core/expressionTree';
+
 // @ts-ignore
 import CalcWorker from './calc.worker?worker';
 const worker = new CalcWorker();
@@ -9,6 +11,9 @@ const historyDiv = document.getElementById('history') as HTMLDivElement;
 const selector = document.getElementById('method-select') as HTMLSelectElement;
 const limitInput = document.getElementById('limit-input') as HTMLInputElement;
 const shareBtn = document.getElementById('share-btn') as HTMLButtonElement;
+const checkBoxOmitAnd = document.getElementById('omit-and-checkbox') as HTMLInputElement;
+const checkBoxForceParens = document.getElementById('force-parens-checkbox') as HTMLInputElement;
+
 
 const toastDiv = document.getElementById('toast') as HTMLDivElement | null;
 let toastTimer: number | undefined;
@@ -48,8 +53,10 @@ function shareCurrentExpression() {
     const expr = encodeURIComponent(input.value.trim());
     const method = encodeURIComponent(selector.value);
     const limit = encodeURIComponent(limitInput.value);
+    const omitAnd = encodeURIComponent(checkBoxOmitAnd.checked ? '1' : '0');
+    const forceParens = encodeURIComponent(checkBoxForceParens.checked ? '1' : '0');
 
-    const url = `${window.location.origin}${window.location.pathname}?expr=${expr}&method=${method}&limit=${limit}`;
+    const url = `${window.location.origin}${window.location.pathname}?expr=${expr}&method=${method}&limit=${limit}&omitAnd=${omitAnd}&forceParens=${forceParens}`;
 
     navigator.clipboard.writeText(url).then(() => {
         showToast('Link copied to clipboard!', 'success');
@@ -85,6 +92,16 @@ function applyUrlParams() {
             limitInput.value = String(n);
         }
     }
+
+    const omitAndParam = params.get('omitAnd');
+    if (omitAndParam === '1') {
+        checkBoxOmitAnd.checked = true;
+    }
+
+    const forceParensParam = params.get('forceParens');
+    if (forceParensParam === '1') {
+        checkBoxForceParens.checked = true;
+    }
 }
 
 
@@ -99,10 +116,16 @@ function calculateAndDisplay() {
     }
     historyDiv.textContent = 'Calculating...';
 
+    const settings: Settings = {
+        latex: true, darkMode: true,
+        omitAndOperator: checkBoxOmitAnd.checked,
+        forceParentheses: checkBoxForceParens.checked
+    };
     worker.postMessage({
         expr,
         method: selector.value,
-        limit: parseInt(limitInput.value)
+        limit: parseInt(limitInput.value),
+        settings: settings
     });
 }
 
@@ -124,11 +147,7 @@ worker.onmessage = (e) => {
 
         historyDiv.innerHTML = katex.renderToString(output, { throwOnError: false });
     } else {
-        if (e.data.error.includes('HARD_LIMIT')) {
-            historyDiv.textContent = 'Hard limit reached during calculation. Try increasing the limit or simplifying the input expression.';
-        } else {
-            historyDiv.textContent = 'Error: ' + e.data.error;
-        }
+        historyDiv.textContent = 'Error: ' + e.data.error;
     }
 };
 
@@ -136,6 +155,9 @@ worker.onmessage = (e) => {
 // Event listeners
 input.addEventListener('input', calculateAndDisplay);
 selector.addEventListener('change', calculateAndDisplay);
+limitInput.addEventListener('input', calculateAndDisplay);
+checkBoxOmitAnd.addEventListener('change', calculateAndDisplay);
+checkBoxForceParens.addEventListener('change', calculateAndDisplay);
 window.addEventListener('load', () => {
     applyUrlParams();
     calculateAndDisplay();

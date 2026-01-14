@@ -10,8 +10,8 @@
     <!-- KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css" integrity="sha384-Pu5+C18nP5dwykLJOhd2U4Xen7rjScHN/qusop27hdd2drI+lL5KvX7YntvT8yew" crossorigin="anonymous">
 
-  <script type="module" crossorigin src="/logic-expr-core/assets/index-BOHM2DwM.js"></script>
-  <link rel="stylesheet" crossorigin href="/logic-expr-core/assets/index-Dh00iyTj.css">
+  <script type="module" crossorigin src="/logic-expr-core/assets/index-D7NFfTtT.js"></script>
+  <link rel="stylesheet" crossorigin href="/logic-expr-core/assets/index-DiqqFpkB.css">
 </head>
 
 <body class="bg-zinc-900 py-4 px-4">
@@ -59,7 +59,7 @@
                                         type="text"
                                         placeholder="Enter logic expression (e.g. a+b')"
                                         autocomplete="off"
-                                        maxlength="8"
+                                        maxlength="20"
                                         value="a+(a'c)'"
                                         class="input-field pr-10"
                                     />
@@ -83,26 +83,51 @@
                                     <option value="nnf">Negation Normal Form (NNF)</option>
                                     <option value="dnf" selected>Disjunctive Normal Form (DNF)</option>
                                     <option value="ednf">Expanded DNF</option>
-                                    <option value="cnf" disabled>Conjunctive Normal Form (CNF)</option>
-                                    <option value="ecnf" disabled>Expanded CNF</option>
+                                    <option value="cnf">Conjunctive Normal Form (CNF)</option>
+                                    <option value="ecnf">Expanded CNF</option>
                                     <option value="anf" disabled>Algebraic Normal Form (ANF)</option>
                                 </select>
                             </div>
                             <div class="flex flex-col w-20">
                                 <label for="limit-input" class="block text-slate-300 font-medium mb-1">Step Limit</label>
-                                <input id="limit-input" type="number" placeholder="5" value="5" class="input-field" />
+                                <input id="limit-input" type="number" placeholder="5" value="5" max="20" min="0" class="input-field" />
                             </div>
                         </div>
                     </div>
+
+                    <div class="mb-4 text-sm">
+                        <div class="mb-2">
+                            <label class="flex items-center gap-2">
+                                <input
+                                    id="omit-and-checkbox"
+                                    type="checkbox"
+                                    checked
+                                />
+                                Omit AND operator in rendered transformations
+                            </label>
+                        </div>
+                        <div>
+                            <label class="flex items-center gap-2">
+                                <input
+                                    id="force-parens-checkbox"
+                                    type="checkbox"
+                                />
+                                Force parentheses in all rendered transformations
+                            </label>
+                        </div>
+                    </div>
+
                 </form>
 
                 <div class="flex items-center gap-3 bg-blue-950/60 text-blue-200 border border-blue-700 rounded px-4 py-3 text-sm shadow">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" viewBox="0 -960 960 960" fill="currentColor">
                         <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
                     </svg>
-                    The input here is limited to 8 characters and 5 calculation steps on purpose.
+                    The input here is limited to 5 calculation steps on purpose.
                     If you bypass this limit, by either editing the HTML source code, or changing the step limit input below,
                     the calculations may become more computationally intensive and take longer to complete.
+                    <br>
+                    (The step limit is counted as the steps between the input expression and the final expression.)
                 </div>
             </div>
 

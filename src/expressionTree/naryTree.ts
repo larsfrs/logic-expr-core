@@ -1,6 +1,7 @@
 import { ExpressionNode, BinaryOperatorNode, LeafNode, UnaryOperatorNode } from '../expressionTree/expressionTree.js';
 import { operatorEvalBoolean, booleanContext } from "../expressionTree/expressionTreeOperators.js";
 import { Marking, defaultMarking, colorMapping } from '../expressionTree/markings.js';
+import { defaultSettings, Settings } from '../expressionTree/expressionTreeSettings.js';
 
 
 /**
@@ -31,22 +32,31 @@ export class NaryOperatorNode extends ExpressionNode {
         parentPrecedence: number = 0,
         isRightChild: boolean = false,
         sorted: boolean = false,
-        settings: { latex: boolean, darkMode: boolean } = { latex: false, darkMode: false }
+        settings: Settings = defaultSettings
     ): string {
+        const metadata = booleanContext.operatorMetadata[this.operator];
         const precedence = booleanContext.operatorMetadata[this.operator].precedence || 0;
         const childStrings = this.children.map(child => child.toString(precedence, isRightChild, sorted, settings));
 
         // sort children AFTER generating their string representations
         if (sorted) childStrings.sort((a, b) => a.localeCompare(b));
 
-        const opString = settings.latex && booleanContext.operatorMetadata[this.operator].canonical === 'MULTIPLY'
-            ? '\\cdot ' : this.operator;
+        // operator string
+        let opString = "";
+        if (!(metadata.canonical === 'AND' && settings.omitAndOperator)) {
+            opString = settings.latex ? `${metadata.latex} ` : this.operator;
+        }
 
         // THEN join them with the operator
         let joinedChildren = childStrings.join(opString);
         if (settings.latex && this.mark.marked) {
             joinedChildren = `\\colorbox{${colorMapping[this.mark.type][settings.darkMode ? 'dark' : 'light']}}{\$${joinedChildren}\$}`;
             joinedChildren = `\\underbrace{${joinedChildren}}_{\\text{${this.mark.type}}}`;
+        }
+
+        // force parentheses if required in settings
+        if (settings.forceParentheses) {
+            joinedChildren = `(${joinedChildren})`;
         }
 
         return (precedence < parentPrecedence) ? `(${joinedChildren})` : joinedChildren;
@@ -155,7 +165,7 @@ export function NaryTreeToBinaryTree(expression: ExpressionNode): ExpressionNode
  * 2. complementLaw.test.ts, case 3
  */
 export function treeCanonicalForm(expressionNode: ExpressionNode): string {
-    return expressionNode.toString(undefined, undefined, true, { latex: false, darkMode: false });
+    return expressionNode.toString(undefined, undefined, true, defaultSettings);
 }
 
 

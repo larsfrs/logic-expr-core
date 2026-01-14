@@ -24,19 +24,20 @@ export type OperatorMetadata = {
     associativity: 'left' | 'right';
     notation: 'infix' | 'prefix' | 'postfix';
     canonical: string;
+    latex: string;
 };
 
 /* BOOLEAN Canonical Symbols, Operators and eval Functions */
 const BooleanCanonicalOps: CanonicalOperators = new Set([ 'NOT', 'AND', 'OR', 'XOR', 'NAND', 'NOR', 'IMPLIES', 'BICONDITIONAL' ]);
 
 const allBooleanOperators: Record<string, OperatorMetadata> = {
-    '!': { type: 'unary', precedence: 4, associativity: 'right', notation: 'prefix', canonical: 'NOT' },
-    '~': { type: 'unary', precedence: 4, associativity: 'right', notation: 'prefix', canonical: 'NOT' },
-    "'": { type: 'unary', precedence: 4, associativity: 'right', notation: 'postfix', canonical: 'NOT' },
-    '&': { type: 'binary', precedence: 3, associativity: 'left', notation: 'infix', canonical: 'AND' },
-    '*': { type: 'binary', precedence: 3, associativity: 'left', notation: 'infix', canonical: 'AND' },
-    '|': { type: 'binary', precedence: 2, associativity: 'left', notation: 'infix', canonical: 'OR' },
-    '+': { type: 'binary', precedence: 2, associativity: 'left', notation: 'infix', canonical: 'OR' }
+    '!': { type: 'unary', precedence: 4, associativity: 'right', notation: 'prefix', canonical: 'NOT', latex: '\\neg' },
+    '~': { type: 'unary', precedence: 4, associativity: 'right', notation: 'prefix', canonical: 'NOT', latex: '\\neg' },
+    "'": { type: 'unary', precedence: 4, associativity: 'right', notation: 'postfix', canonical: 'NOT', latex: '\\neg' },
+    '&': { type: 'binary', precedence: 3, associativity: 'left', notation: 'infix', canonical: 'AND', latex: '\\cdot' },
+    '*': { type: 'binary', precedence: 3, associativity: 'left', notation: 'infix', canonical: 'AND', latex: '\\cdot' },
+    '|': { type: 'binary', precedence: 2, associativity: 'left', notation: 'infix', canonical: 'OR', latex: '+' },
+    '+': { type: 'binary', precedence: 2, associativity: 'left', notation: 'infix', canonical: 'OR', latex: '+' },
 }
 
 // only defined for prefix and infix notation, as postfix operators will be converted to prefix notation
@@ -65,12 +66,12 @@ export const booleanContext: OperatorContext = {
 const MathCanonicalOps: CanonicalOperators = new Set([ 'ADD', 'SUBTRACT', 'MULTIPLY', 'DIVIDE', 'MODULO' ]);
 
 const allMathOperators: Record<string, OperatorMetadata> = {
-    '*': { type: 'binary', precedence: 3, associativity: 'left', notation: 'infix', canonical: 'MULTIPLY' },
-    '+': { type: 'binary', precedence: 2, associativity: 'left', notation: 'infix', canonical: 'ADD' },
-    '-': { type: 'binary', precedence: 2, associativity: 'left', notation: 'infix', canonical: 'SUBTRACT' },
-    '/': { type: 'binary', precedence: 3, associativity: 'left', notation: 'infix', canonical: 'DIVIDE' },
-    '%': { type: 'binary', precedence: 3, associativity: 'left', notation: 'infix', canonical: 'MODULO' },
-    '^': { type: 'binary', precedence: 4, associativity: 'right', notation: 'infix', canonical: 'POWER' }
+    '*': { type: 'binary', precedence: 3, associativity: 'left', notation: 'infix', canonical: 'MULTIPLY', latex: '\\cdot' },
+    '+': { type: 'binary', precedence: 2, associativity: 'left', notation: 'infix', canonical: 'ADD', latex: '+' },
+    '-': { type: 'binary', precedence: 2, associativity: 'left', notation: 'infix', canonical: 'SUBTRACT', latex: '-' },
+    '/': { type: 'binary', precedence: 3, associativity: 'left', notation: 'infix', canonical: 'DIVIDE', latex: '\\div' },
+    '%': { type: 'binary', precedence: 3, associativity: 'left', notation: 'infix', canonical: 'MODULO', latex: '\\bmod' },
+    '^': { type: 'binary', precedence: 4, associativity: 'right', notation: 'infix', canonical: 'POWER', latex: '^' }
 };
 
 const operatorEvalMath: Record<string, (a: number, b: number) => number> = {

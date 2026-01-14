@@ -7,9 +7,19 @@ export class ExpressionTreeHistory {
     rootRef: ExpressionNode;
     versions: ExpressionNode[];
 
-    constructor(initialNode: ExpressionNode) {
+    // limit has to be bigger than 2
+    STEP_LIMIT: number;
+
+    constructor(
+        initialNode: ExpressionNode,
+        STEP_LIMIT: number = 100
+    ) {
         this.rootRef = initialNode; // reference to the root node
         this.versions = [deepCopy(initialNode)];
+        if (STEP_LIMIT < 0) {
+            throw new Error(`ExpressionTreeHistory: STEP_LIMIT has to be at least 0, got ${STEP_LIMIT}`);
+        }
+        this.STEP_LIMIT = STEP_LIMIT;
     }
 
     getRoot(): ExpressionNode {
@@ -23,6 +33,12 @@ export class ExpressionTreeHistory {
      * before the root changes and the new root is assigned.
      */
     snapshot(node: ExpressionNode) {
+
+        if (this.versions.length >= this.STEP_LIMIT) {
+            throw new Error(`ExpressionTreeHistory: STEP_LIMIT of
+                ${this.STEP_LIMIT} reached, cannot store more versions in history.`);
+        }
+
         this.versions.push(deepCopy(this.rootRef));
         resetMarkings(this.rootRef);
         if (node.root === true && node !== this.rootRef) {
