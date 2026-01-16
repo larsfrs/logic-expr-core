@@ -1,5 +1,5 @@
 # folders
-dist/
+/dist/
 node_modules/
 
 # IDEs

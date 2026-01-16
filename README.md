@@ -19,76 +19,42 @@ A TypeScript module that parses, transforms, derives and evaluates logic express
 
 ## Installation
 
-- install from repository:
+- Install from repository:
 ```bash
 git clone https://github.com/larsfrs/logic-expr-core.git
 cd logic-expr-core
 npm install
 npm run build
 ```
-- then you can use it in your project by either:
-    - creating a symlink with `npm link` (good for development)
-    - importing it directly from the `dist` folder (or copy the contents of the `dist` folder to your project)
+- Then you can use it in your project by either:
+    - Creating a symlink with `npm link` (good for development)
+    - Importing it directly from the `dist` folder (or copy the contents of the `dist` folder to your project)
 
-- install with npm:
+- Install with npm:
 ```bash
 npm install logic-expr-core
 ```
 
-## Features
+## Documentation
 
-- parse string of expression to RPN (Reverse Polish Notation)
-    - `a*!(b|c) => a b c | ! *`
-    - handle different notations like postfix and prefix, add/omit "and" operators, etc.
+- The documentation can be found in the `/docs` folder. See the [`docs/index.md`](docs/index.md) for a complete overview.
 
-- parse RPN to a binary AST (Abstract Syntax Tree)
-    ```
-    BinaryOperatorNode (AND)
-    ├── LeafNode (a)
-    ├── UnaryOperatorNode (NOT)
-    │   └── BinaryOperatorNode (OR)
-    │       ├── LeafNode (b)
-    │       └── LeafNode (c)
-    ```
+## Goals for logic-expr-core
+- Create a typescript module for visualizing algebraic transformations, specifically for boolean algebra (for now)
+    - The module should be easy to extend!
+- Show through code how to implement a parser, AST, evaluator, etc. in TypeScript
+- Keep it small and simple, with minimal dependencies
 
-- evaluate binary AST to boolean value
-    ```typescript
-    const result: boolean = evaluateExpression("a!(b+c)", { a: true, b: false, c: true }, booleanContext);
-    console.log(result); // false
-    ```
-
-- turn binary AST to n-ary AST (more than 2 children per node)
-    ```
-    BinaryOperatorNode (AND)
-    ├── LeafNode (a)
-    ├── BinaryOperatorNode (AND)
-    │   ├── LeafNode (b)
-    │   └── LeafNode (c)
-    ```
-    - turns into n-ary AST: (and back)    
-    ```
-    NaryOperatorNode (AND)
-    ├── LeafNode (a)
-    ├── LeafNode (b)
-    └── LeafNode (c)
-    ```
-
-- apply transformative laws to the AST
-    - e.g. distributive law, absorption law, de Morgan's law, etc.
-
-- transform the AST to different normal forms (NNF, DNF)
-    - show every step of the transformation and output a list of transformations
-    
-- visualization of the expression tree and transformations
 
 ## In development
-- equivalence checking (using truth tables, CNF and DNF, etc.)
+- A tooltip system, where hovering over each expression in the transformation reveals specific information about that particular step
+- A comprehensive documentation with a bunch of examples and explanations (e.g. how to implement an absorption law, how to create custom operators, etc.)
+- Right now only AND OR and NOT work in the transformations, this will be extended to support other boolean operators like NAND, NOR, XOR, XNOR, etc.
+- Truth tables: Functions and classes to easily implement a truth table generator
+- Optimizations: For each transformation method implement (if possible):
+    - Caching strategies
+    - *Directed Acyclic Graphs* to handle duplicate subtrees
 
-## Goal
-- create a module for visualizing transformations of expressions in boolean algebra
-- show through the code how to implement a parser, AST, evaluator, etc. in TypeScript
-- make it easy to extend and customize for different use cases
-- keep it small and simple, without unnecessary dependencies
 
 ## Keywords
 logic, boolean algebra, expressions, parser, AST, abstract syntax tree, RPN, reverse polish notation, evaluator, normal forms, DNF, CNF, NNF, TypeScript

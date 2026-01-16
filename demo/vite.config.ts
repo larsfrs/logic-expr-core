@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5173
   },
   build: {
-    outDir: '../docs',
+    outDir: './dist/',
     emptyOutDir: true
   },
   base: '/logic-expr-core',
