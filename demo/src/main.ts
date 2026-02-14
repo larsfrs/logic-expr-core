@@ -1,4 +1,5 @@
 import katex from 'katex';
+import { createCollapsible } from './collapsible.js';
 
 import type { Settings } from 'logic-expr-core/expressionTree';
 
@@ -130,9 +131,70 @@ function calculateAndDisplay() {
 }
 
 
+worker.onmessage = (e) => {
+    if (e.data.success) {
+        const { versionsLatex, exprLatex, resultingForm } = e.data.result;
+        let output = '';
+
+        // render first step as non-collapsible block with "input expression" annotation
+        let inputLatexString = `${katex.renderToString(
+            versionsLatex[0] + ' \\; \\text{(input expression)}',
+            { throwOnError: false, displayMode: true }
+        )}`;
+
+        output += createCollapsible(
+            {
+                id: `step-0`,
+                step: 0,
+                equationHtml: inputLatexString,
+                explanationHtml: `<p>This is the explanation for step 0.</p>`,
+                type: 'input'
+            }
+        );
+
+        for (let i = 1; i < versionsLatex.length; ++i) {
+
+            let latexEquationString: string = `${katex.renderToString(
+                versionsLatex[i] + (i === 0 ? ' \\; \\text{(input expression)}' : ''),
+                { throwOnError: false, displayMode: true }
+            )}`;
+
+            // render each step as separate KaTeX collapsible block with explanation
+            output += createCollapsible(
+                {
+                    id: `step-${i}`,
+                    step: i,
+                    equationHtml: latexEquationString,
+                    explanationHtml: `<p>This is the explanation for step ${i}.</p>`,
+                    type: i !== 2 ? 'intermediate' : 'important'
+                }
+            );
+        }
+        
+        let finalLatexString: string = `${katex.renderToString(
+            exprLatex + ' \\; \\text{' + resultingForm + '}',
+            { throwOnError: false, displayMode: true }
+        )}`;
+
+        output += createCollapsible(
+            {
+                id: `final-step`,
+                step: versionsLatex.length,
+                equationHtml: finalLatexString,
+                explanationHtml: `<p>This is the explanation for the final result.</p>`,
+                type: 'final'
+            }
+        );
+
+        historyDiv.innerHTML = output;
+    } else {
+        historyDiv.textContent = 'Error: ' + e.data.error;
+    }
+};
+
 /**
  * Handle return message from worker.
- */
+
 worker.onmessage = (e) => {
     if (e.data.success) {
         const { versionsLatex, exprLatex, resultingForm } = e.data.result;
@@ -149,7 +211,7 @@ worker.onmessage = (e) => {
     } else {
         historyDiv.textContent = 'Error: ' + e.data.error;
     }
-};
+};*/
 
 
 // Event listeners
